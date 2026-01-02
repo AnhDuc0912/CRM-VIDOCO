@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/timekeeping",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\TimeKeeping\\": "./",
+            "Modules\\TimeKeeping\\Database\\Factories\\": "database/factories/",
+            "Modules\\TimeKeeping\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\TimeKeeping\\Tests\\": "tests/"
+        }
+    }
+}

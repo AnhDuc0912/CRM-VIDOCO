@@ -1,0 +1,333 @@
+<?php
+
+namespace Modules\Proposal\Services;
+
+use App\Helpers\FileHelper;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Modules\Core\Enums\TemplateCodeEnum;
+use Modules\Order\Repositories\Contracts\CategoryRepositoryInterface;
+use Modules\Proposal\Enums\ProposalStatusEnum;
+use Modules\Proposal\Repositories\Contracts\ProposalRepositoryInterface;
+use Modules\SellContract\Enums\SellContractStatusEnum;
+use Modules\SellOrder\Services\SellOrderService;
+
+class ProposalService
+{
+    protected $proposalRepository;
+    protected $categoryRepository;
+    protected $sellOrderService;
+
+    public function __construct(ProposalRepositoryInterface $proposalRepository, CategoryRepositoryInterface $categoryRepository, SellOrderService $sellOrderService)
+    {
+        $this->proposalRepository = $proposalRepository;
+        $this->categoryRepository = $categoryRepository;
+        $this->sellOrderService = $sellOrderService;
+    }
+
+    /**
+     * Get all proposals
+     *
+     * @return Collection
+     */
+    public function getProposals()
+    {
+        return $this->proposalRepository->getProposals();
+    }
+
+    /**
+     * Create a new proposal
+     *
+     * @param array $data
+     *
+     * @return mixed
+     */
+    public function createProposal(array $data)
+    {
+        $data['code'] = generate_code(TemplateCodeEnum::PROPOSAL, 'proposals');
+        $data['created_by'] = Auth::user()->id;
+        DB::beginTransaction();
+        try {
+            $data['amount'] = $this->calculateAmount($data['services'] ?? []);
+            $proposal = $this->proposalRepository->create($data);
+            if (isset($data['files'])) {
+                $this->updateFiles($proposal, $data['files']);
+            }
+
+            if (isset($data['services'])) {
+                foreach ($data['services'] as $service) {
+                    $proposal->services()->create([
+                        'category_id' => $service['category_id'] ?? null,
+                        'service_id' => $service['service_id'] ?? null,
+                        'product_id' => $service['product_id'] ?? null,
+                        'price' => $service['price'],
+                        'quantity' => $service['quantity'],
+                        'total' => $service['total'] ?? ($service['price'] * $service['quantity']),
+                        'proposal_id' => $proposal->id,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return $proposal;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Calculate amount of proposal services
+     *
+     * @param array $proposalServices
+     * @return float
+     */
+    public function calculateAmount($proposalServices)
+    {
+        $total = 0;
+        foreach ($proposalServices as $service) {
+            if (isset($service['total'])) {
+                // Nếu có total, dùng total (đã format)
+                $cleanTotal = is_string($service['total']) ?
+                    (int)str_replace([',', '.'], '', $service['total']) :
+                    $service['total'];
+                $total += $cleanTotal;
+            } else {
+                // Fallback: tính từ price * quantity
+                $cleanPrice = is_string($service['price']) ?
+                    (int)str_replace([',', '.'], '', $service['price']) :
+                    $service['price'];
+                $total += $cleanPrice * $service['quantity'];
+            }
+        }
+        return $total;
+    }
+
+    /**
+     * Update files
+     *
+     * @param Proposal $proposal
+     * @param array $files
+     * @return void
+     */
+    private function updateFiles($proposal, $files)
+    {
+        if (!empty($files)) {
+            // if ($proposal->files()->count() > 0) {
+            //     $paths = $proposal->files()->pluck('path');
+            //     foreach ($paths as $path) {
+            //         FileHelper::deleteFile($path);
+            //     }
+            //     $proposal->files()->delete();
+            // }
+
+            $path = 'proposals/' . str_replace('/', '-', $proposal->code);
+            foreach ($files as $file) {
+                $file = FileHelper::uploadFile($file, $path);
+                $proposal->files()->create([
+                    'path' => $file['path'],
+                    'name' => $file['filename'],
+                    'extension' => $file['extension'],
+                    'proposal_id' => $proposal->id,
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Download category files as zip
+     *
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|null
+     */
+    public function downloadFiles($id)
+    {
+        try {
+            $proposal = $this->proposalRepository->find($id);
+
+            if (!$proposal) {
+                throw new \Exception('Không tìm thấy báo giá');
+            }
+
+            // Get all file paths for this category
+            $filePaths = $proposal->files()->pluck('path')->toArray();
+
+            if (empty($filePaths)) {
+                throw new \Exception('Không có file nào để download');
+            }
+
+            // Create zip file (clean category code for filename)
+            $cleanCode = str_replace(['/', '\\'], '-', $proposal->code);
+            $zipName = 'proposal_' . $cleanCode . '_files';
+            $result = FileHelper::createZipFromFiles($filePaths, $zipName, 'public');
+            if (!$result['success']) {
+                Log::error('Failed to create zip file for proposal: ' . $proposal->id, [
+                    'error' => $result['error'],
+                    'errors' => $result['errors'] ?? []
+                ]);
+
+                return redirect()->back()->with('error', 'Không thể tạo file zip: ' . $result['error']);
+            }
+
+            // Return download response
+            $downloadResponse = FileHelper::downloadZip($result['file_path'], $result['file_name']);
+
+            if (!$downloadResponse) {
+                return redirect()->back()->with('error', 'Không thể tạo response download');
+            }
+
+            return $downloadResponse;
+        } catch (\Exception $e) {
+            Log::error('Error downloading proposal files', [
+                'proposal_id' => $proposal ? $proposal->id : null,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi download files: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Convert a proposal to an order.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function convertToOrder($id)
+    {
+        DB::beginTransaction();
+        try {
+            $proposal = $this->proposalRepository->find($id);
+            if (!$proposal) {
+                throw new \Exception('Không tìm thấy báo giá');
+            }
+
+            $update = $proposal->update([
+                'status' => ProposalStatusEnum::CONVER_TO_ORDER,
+            ]);
+
+            if (!$update) {
+                throw new \Exception('Không thể chuyển thành đơn hàng');
+            }
+
+            $this->handleConvertToOrder($proposal);
+
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Get a proposal by id.
+     *
+     * @param int $id
+     * @return \App\Models\Proposal
+     */
+    public function getProposalById($id)
+    {
+        return $this->proposalRepository->getProposalById($id);
+    }
+
+    /**
+     * Remove a file from a proposal.
+     *
+     * @param int $id
+     * @param int $fileId
+     * @return void
+     */
+    public function removeFile($id, $fileId)
+    {
+        $proposal = $this->proposalRepository->find($id);
+        if (!$proposal) {
+            throw new \Exception('Không tìm thấy báo giá');
+        }
+
+        $file = $proposal->files()->where('id', $fileId)->first();
+        $deleted = $proposal->files()->where('id', $fileId)->delete();
+
+        if ($deleted) {
+            if (FileHelper::fileExists($file->path)) {
+                FileHelper::deleteFile($file->path);
+            }
+        }
+    }
+
+    /**
+     * Update a proposal.
+     *
+     * @param int $id
+     * @param array $data
+     * @return bool
+     */
+    public function updateProposal($id, $data)
+    {
+
+        DB::beginTransaction();
+        try {
+            $proposal = $this->proposalRepository->findOrFail($id);
+            $data['amount'] = $this->calculateAmount($data['services'] ?? []);
+
+            $proposal->update($data);
+            if (isset($data['files'])) {
+                $this->updateFiles($proposal, $data['files']);
+            }
+            if (isset($data['services'])) {
+                $proposal->services()->delete();
+                foreach ($data['services'] as $service) {
+                    $proposal->services()->create([
+                        'category_id' => $service['category_id'] ?? null,
+                        'service_id' => $service['service_id'] ?? null,
+                        'product_id' => $service['product_id'] ?? null,
+                        'price' => $service['price'],
+                        'quantity' => $service['quantity'],
+                        'total' => $service['total'] ?? ($service['price'] * $service['quantity']),
+                        'proposal_id' => $proposal->id,
+                    ]);
+                }
+            }
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Get categories for create form
+     */
+    public function getCategoriesForCreate()
+    {
+        return $this->categoryRepository->getActiveCategories();
+    }
+
+    public function handleConvertToOrder($proposal)
+    {
+        $data = [
+            'status' => SellContractStatusEnum::NEW,
+            'note' => $proposal->note ?? '',
+            'expired_at' => $proposal->expired_at ?? now()->addDays(30),
+            'proposal_id' => $proposal->id,
+            'customer_id' => $proposal->customer_id ?? null,
+            'services' => $proposal->services?->map(function ($service) {
+                return [
+                    'category_id' => $service->category_id,
+                    'service_id' => $service->service_id,
+                    'product_id' => $service->product_id,
+                    'price' => $service->price,
+                    'quantity' => $service->quantity,
+                    'total' => $service->total,
+                ];
+            })->toArray() ?? [],
+            'files' => $proposal->files?->toArray() ?? [],
+        ];
+
+        $isConvertToOrder = true;
+        $this->sellOrderService->createSellOrder($data, $isConvertToOrder);
+    }
+}

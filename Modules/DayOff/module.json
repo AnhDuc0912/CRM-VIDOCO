@@ -1,0 +1,11 @@
+{
+    "name": "DayOff",
+    "alias": "dayoff",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\DayOff\\Providers\\DayOffServiceProvider"
+    ],
+    "files": []
+}

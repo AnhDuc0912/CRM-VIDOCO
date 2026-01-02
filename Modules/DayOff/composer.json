@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/dayoff",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\DayOff\\": "./",
+            "Modules\\DayOff\\Database\\Factories\\": "database/factories/",
+            "Modules\\DayOff\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\DayOff\\Tests\\": "tests/"
+        }
+    }
+}

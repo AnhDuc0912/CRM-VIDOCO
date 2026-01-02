@@ -1,0 +1,10 @@
+<?php
+
+namespace $CLASS_NAMESPACE$;
+
+use Modules\Core\Repositories\Contracts\BaseRepositoryInterface;
+
+interface $CLASS$ extends BaseRepositoryInterface
+{
+    // Add your custom methods here
+}

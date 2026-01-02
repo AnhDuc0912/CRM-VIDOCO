@@ -1,0 +1,11 @@
+{
+    "name": "SellContract",
+    "alias": "sellcontract",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\SellContract\\Providers\\SellContractServiceProvider"
+    ],
+    "files": []
+}

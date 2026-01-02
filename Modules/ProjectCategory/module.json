@@ -1,0 +1,11 @@
+{
+    "name": "ProjectCategory",
+    "alias": "projectcategory",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ProjectCategory\\Providers\\ProjectCategoryServiceProvider"
+    ],
+    "files": []
+}

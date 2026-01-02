@@ -1,0 +1,23 @@
+{
+    "Auth": true,
+    "User": true,
+    "Department": true,
+    "Employee": true,
+    "Core": true,
+    "Category": true,
+    "Customer": true,
+    "Order": true,
+    "Proposal": true,
+    "SellContract": true,
+    "SellOrder": true,
+    "Project": true,
+    "Work": true,
+    "Comment": true,
+    "Level": true,
+    "Position": true,
+    "ProjectCategory": true,
+    "DayOff": true,
+    "Log": true,
+    "TimeKeeping": true,
+    "Document": true
+}

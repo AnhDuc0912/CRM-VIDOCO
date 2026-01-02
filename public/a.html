@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<title>Thêm báo giá</title>
+	<!--favicon-->
+	<link rel="icon" href="assets/images/favicon-32x32.png" type="image/png" />
+	<!--plugins-->
+	<link href="assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
+	<!--Data Tables -->
+	<link href="assets/plugins/datatable/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/plugins/datatable/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css">
+	<!--plugins-->
+	<link href="assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
+	<link href="assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
+	<link href="assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
+
+	<link href="assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+	<link href="assets/plugins/select2/css/select2-bootstrap4.css" rel="stylesheet" />
+
+
+	<!-- loader-->
+	<link href="assets/css/pace.min.css" rel="stylesheet" />
+	<script src="assets/js/pace.min.js"></script>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Roboto&display=swap" />
+	<!-- Icons CSS -->
+	<link rel="stylesheet" href="assets/css/icons.css" />
+	<!-- App CSS -->
+	<link rel="stylesheet" href="assets/css/app.css" />
+	<link rel="stylesheet" href="assets/css/dark-sidebar.css" />
+	<link rel="stylesheet" href="assets/css/dark-theme.css" />
+</head>
+
+<body>
+	<!-- wrapper -->
+	<div class="wrapper">
+		<!--sidebar-wrapper-->
+		<div class="sidebar-wrapper" data-simplebar="true">
+			<div class="sidebar-header">
+				<div class="">
+					<img src="assets/images/logo-icon.png" class="logo-icon-2" alt="" />
+				</div>
+
+				<a href="javascript:;" class="toggle-btn ms-auto"> <i class="bx bx-menu"></i>
+				</a>
+			</div>
+				<!--navigation-->
+			<ul class="metismenu" id="menu">
+				<li>
+					<a href="javascript:;" class="has-arrow">
+						<div class="parent-icon icon-color-1"><i class="bx bx-home-alt"></i>
+						</div>
+						<div class="menu-title">Thống Kê</div>
+					</a>
+					<ul>
+						<li> <a href="index.html"><i class="bx bx-right-arrow-alt"></i>Tổng Quan - CEO</a>
+						</li>
+						<li> <a href="index2.html"><i class="bx bx-right-arrow-alt"></i>Kinh doanh - CEO</a>
+						</li>
+						<li> <a href="index3.html"><i class="bx bx-right-arrow-alt"></i>Tổng Quan nhân viên</a>
+						</li>
+						<li> <a href="index4.html"><i class="bx bx-right-arrow-alt"></i>Tổng Quan Sale</a>
+						</li>
+					</ul>
+				</li>
+				<li class="menu-label">VIDO HRM+</li>
+				<li>
+					<a class="has-arrow" href="javascript:;">
+						<div class="parent-icon icon-color-1">
+							<i class="bx bx-group"></i>
+						</div>
+						<div class="menu-title">Quản lý nhân sự</div>
+					</a>
+					<ul>
+						<li> <a href="01-chi-tiet-nhan-su.html"><i class="bx bx-right-arrow-alt"></i> Chi Tiết nhân sự</a>
+						</li>
+						<li> <a href="01-them-nhan-su.html"><i class="bx bx-right-arrow-alt"></i> Thêm Nhân Sự</a>
+						</li>
+						<li> <a href="01-danh-sach-nhan-su.html"><i class="bx bx-right-arrow-alt"></i> Danh sách nhân sự</a>
+						</li>
+					</ul>
+				</li>
+				<li class="menu-label">VIDO CRM+</li>
+				<li>
+					<a class="has-arrow" href="javascript:;">
+						<div class="parent-icon icon-color-10">
+							<i class="bx bx-file"></i>
+						</div>
+						<div class="menu-title">Dịch Vụ Khách Hàng</div>
+					</a>
+					<ul>
+						<li> <a href="02-dich-vu-dang-dung.html"><i class="bx bx-right-arrow-alt"></i>Dịch vụ đang dùng</a>
+						</li>
+						<li> <a href="02-dich-vu-sap-het-han.html"><i class="bx bx-right-arrow-alt"></i>Dịch vụ sắp hết hạn</a>
+						</li>
+						<li> <a href="02-dich-vu-het-han.html"><i class="bx bx-right-arrow-alt"></i>Dịch vụ hết hạn</a>
+						</li>
+						<li> <a href="02-chi-tiet-dich-vu-khach-hang.html"><i class="bx bx-right-arrow-alt"></i>Chi tiết dịch vụ khách hàng</a>
+						</li>
+						<li> <a href="02-gia-han-dich-vu.html"><i class="bx bx-right-arrow-alt"></i>Gia hạn dịch vụ</a>
+						</li>
+						<li> <a href="02-them-dich-vu-khach-hang.html"><i class="bx bx-right-arrow-alt"></i>Thêm dịch vụ KH</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a class="has-arrow" href="javascript:;">
+						<div class="parent-icon icon-color-4"><i class="bx bx-user-circle"></i>
+						</div>
+						<div class="menu-title">Hồ Sơ Khách Hàng</div>
+					</a>
+					<ul>
+						<li> <a href="03-them-khach-hang.html"><i class="bx bx-right-arrow-alt"></i>Thêm khách hàng</a>
+						</li>
+						<li> <a href="03-danh-sach-khach-hang.html"><i class="bx bx-right-arrow-alt"></i>Danh sách khách hàng</a>
+						</li>
+						<li> <a href="03-chi-tiet-khach-hang.html"><i class="bx bx-right-arrow-alt"></i>Chi tiết khách hàng</a>
+						</li>
+
+					</ul>
+				</li>
+				<li>
+					<a class="has-arrow" href="javascript:;">
+						<div class="parent-icon icon-color-7">
+							<i class="bx bx-file"></i>
+						</div>
+						<div class="menu-title">Bán hàng</div>
+					</a>
+					<ul>
+						<li> <a href="04-them-bao-gia.html"><i class="bx bx-right-arrow-alt"></i>Thêm báo giá</a>
+						</li>
+						<li> <a href="04-danh-sach-bao-gia.html"><i class="bx bx-right-arrow-alt"></i>Danh sách báo giá</a>
+						</li>
+						<li> <a href="04-them-hop-dong.html"><i class="bx bx-right-arrow-alt"></i>		Thêm hợp đồng</a>
+						</li>
+						<li> <a href="04-danh-sach-hop-dong.html"><i class="bx bx-right-arrow-alt"></i>Danh sách hợp đồng</a>
+						</li>
+						<li><a href="04-them-don-hang.html"><i class="bx bx-right-arrow-alt"></i>Thêm đơn hàng</a>
+						</li>
+						<li><a href="04-danh-sach-don-hang.html"><i class="bx bx-right-arrow-alt"></i>Danh sách đơn hàng</a>
+						</li>
+						<li> <a href="04-chi-tiet-don-hang.html"><i class="bx bx-right-arrow-alt"></i>Chi tiết đơn hàng</a>
+						</li>
+						<li> <a href="04-chi-tiet-bao-gia.html"><i class="bx bx-right-arrow-alt"></i>Chi tiết báo giá</a>
+						</li>
+						<li> <a href="04-chi-tiet-hop-dong.html"><i class="bx bx-right-arrow-alt"></i>Chi tiết hợp đồng</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a class="has-arrow" href="javascript:;">
+						<div class="parent-icon icon-color-8"><i class="bx bx-diamond"></i>
+						</div>
+						<div class="menu-title">Dịch Vụ Bán Ra</div>
+					</a>
+					<ul>
+						<li>
+							<a href="05-them-dich-vu-ban-ra.html"><i class="bx bx-right-arrow-alt"></i>Thêm Dịch vụ</a>
+						</li>
+							<li>
+							<a href="05-loai-dich-vu.html"><i class="bx bx-right-arrow-alt"></i>Loại Dịch Vụ</a>
+						</li>
+						<li>
+							<a href="05-them-danh-muc-dich-vu.html"><i class="bx bx-right-arrow-alt"></i>Thêm Danh Mục</a>
+						</li>
+						<li>
+							<a href="05-danh-sach-dich-vu-ban-ra.html"><i class="bx bx-right-arrow-alt"></i>Dịch Vụ Bán Ra</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a class="has-arrow" href="javascript:;">
+						<div class="parent-icon icon-color-3"><i class="bx bx-lock"></i>
+						</div>
+						<div class="menu-title">Cấu Hình Chung</div>
+					</a>
+					<ul>
+						<li>
+							<a href="06-phan-quyen.html"><i class="bx bx-right-arrow-alt"></i>Phân quyền</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+			<!--end navigation-->
+		</div>
+		<!--end sidebar-wrapper-->
+		<!--header-->
+		<header class="top-header">
+			<nav class="navbar navbar-expand">
+				<div class="left-topbar d-flex align-items-center">
+					<a href="javascript:;" class="toggle-btn">	<i class="bx bx-menu"></i>
+					</a>
+				</div>
+				<div class="flex-grow-1 search-bar">
+					<div class="input-group">
+						 <button class="btn btn-search-back search-arrow-back" type="button"><i class="bx bx-arrow-back"></i></button>
+						 <input type="text" class="form-control" placeholder="search" />
+						 <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i></button>
+					</div>
+				</div>
+				<div class="right-topbar ms-auto">
+					<ul class="navbar-nav">
+						<li class="nav-item search-btn-mobile">
+							<a class="nav-link position-relative" href="javascript:;">	<i class="bx bx-search vertical-align-middle"></i>
+							</a>
+						</li>
+						<li class="nav-item dropdown dropdown-lg">
+							<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="javascript:;" data-bs-toggle="dropdown">	<span class="msg-count">6</span>
+								<i class="bx bx-comment-detail vertical-align-middle"></i>
+							</a>
+							<div class="dropdown-menu dropdown-menu-end">
+								<a href="javascript:;">
+									<div class="msg-header">
+										<h6 class="msg-header-title">6 New</h6>
+										<p class="msg-header-subtitle">Application Messages</p>
+									</div>
+								</a>
+								<div class="header-message-list">
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-1.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Daisy Anderson <span class="msg-time float-end">5 sec
+													ago</span></h6>
+												<p class="msg-info">The standard chunk of lorem</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-2.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Althea Cabardo <span class="msg-time float-end">14
+													sec ago</span></h6>
+												<p class="msg-info">Many desktop publishing packages</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-3.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Oscar Garner <span class="msg-time float-end">8 min
+													ago</span></h6>
+												<p class="msg-info">Various versions have evolved over</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-4.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Katherine Pechon <span class="msg-time float-end">15
+													min ago</span></h6>
+												<p class="msg-info">Making this the first true generator</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-5.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Amelia Doe <span class="msg-time float-end">22 min
+													ago</span></h6>
+												<p class="msg-info">Duis aute irure dolor in reprehenderit</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-6.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Cristina Jhons <span class="msg-time float-end">2 hrs
+													ago</span></h6>
+												<p class="msg-info">The passage is attributed to an unknown</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-7.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">James Caviness <span class="msg-time float-end">4 hrs
+													ago</span></h6>
+												<p class="msg-info">The point of using Lorem</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-8.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Peter Costanzo <span class="msg-time float-end">6 hrs
+													ago</span></h6>
+												<p class="msg-info">It was popularised in the 1960s</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-9.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">David Buckley <span class="msg-time float-end">2 hrs
+													ago</span></h6>
+												<p class="msg-info">Various versions have evolved over</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-10.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Thomas Wheeler <span class="msg-time float-end">2 days
+													ago</span></h6>
+												<p class="msg-info">If you are going to use a passage</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="user-online">
+												<img src="assets/images/avatars/avatar-11.png" class="msg-avatar" alt="user avatar">
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Johnny Seitz <span class="msg-time float-end">5 days
+													ago</span></h6>
+												<p class="msg-info">All the Lorem Ipsum generators</p>
+											</div>
+										</div>
+									</a>
+								</div>
+								<a href="javascript:;">
+									<div class="text-center msg-footer">View All Messages</div>
+								</a>
+							</div>
+						</li>
+						<li class="nav-item dropdown dropdown-lg">
+							<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="javascript:;" data-bs-toggle="dropdown">	<i class="bx bx-bell vertical-align-middle"></i>
+								<span class="msg-count">8</span>
+							</a>
+							<div class="dropdown-menu dropdown-menu-end">
+								<a href="javascript:;">
+									<div class="msg-header">
+										<h6 class="msg-header-title">8 New</h6>
+										<p class="msg-header-subtitle">Application Notifications</p>
+									</div>
+								</a>
+								<div class="header-notifications-list">
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="notify bg-light-primary text-primary"><i class="bx bx-group"></i>
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">New Customers<span class="msg-time float-end">14 Sec
+													ago</span></h6>
+												<p class="msg-info">5 new user registered</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="notify bg-light-danger text-danger"><i class="bx bx-cart-alt"></i>
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">New Orders <span class="msg-time float-end">2 min
+													ago</span></h6>
+												<p class="msg-info">You have recived new orders</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="notify bg-light-shineblue text-shineblue"><i class="bx bx-file"></i>
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">24 PDF File<span class="msg-time float-end">19 min
+													ago</span></h6>
+												<p class="msg-info">The pdf files generated</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="notify bg-light-cyne text-cyne"><i class="bx bx-send"></i>
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Time Response <span class="msg-time float-end">28 min
+													ago</span></h6>
+												<p class="msg-info">5.1 min avarage time response</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="notify bg-light-purple text-purple"><i class="bx bx-home-circle"></i>
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">New Product Approved <span
+													class="msg-time float-end">2 hrs ago</span></h6>
+												<p class="msg-info">Your new product has approved</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="notify bg-light-warning text-warning"><i class="bx bx-message-detail"></i>
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">New Comments <span class="msg-time float-end">4 hrs
+													ago</span></h6>
+												<p class="msg-info">New customer comments recived</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="notify bg-light-success text-success"><i class='bx bx-check-square'></i>
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Your item is shipped <span class="msg-time float-end">5 hrs
+													ago</span></h6>
+												<p class="msg-info">Successfully shipped your item</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="notify bg-light-sinata text-sinata"><i class='bx bx-user-pin'></i>
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">New 24 authors<span class="msg-time float-end">1 day
+													ago</span></h6>
+												<p class="msg-info">24 new authors joined last week</p>
+											</div>
+										</div>
+									</a>
+									<a class="dropdown-item" href="javascript:;">
+										<div class="d-flex align-items-center">
+											<div class="notify bg-light-mehandi text-mehandi"><i class='bx bx-door-open'></i>
+											</div>
+											<div class="flex-grow-1">
+												<h6 class="msg-name">Defense Alerts <span class="msg-time float-end">2 weeks
+													ago</span></h6>
+												<p class="msg-info">45% less alerts last 4 weeks</p>
+											</div>
+										</div>
+									</a>
+								</div>
+								<a href="javascript:;">
+									<div class="text-center msg-footer">View All Notifications</div>
+								</a>
+							</div>
+						</li>
+						<li class="nav-item dropdown dropdown-user-profile">
+							<a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
+								<div class="d-flex user-box align-items-center">
+									<div class="user-info">
+										<p class="user-name mb-0">Trần Thông</p>
+										<p class="designattion mb-0">online</p>
+									</div>
+									<img src="assets/images/avatars/avatar-1.png" class="user-img" alt="user avatar">
+								</div>
+							</a>
+							<div class="dropdown-menu dropdown-menu-end">
+								<a class="dropdown-item" href="javascript:;"><i
+										class="bx bx-user"></i><span>Profile</span></a>
+								<a class="dropdown-item" href="javascript:;"><i
+										class="bx bx-cog"></i><span>Settings</span></a>
+								<a class="dropdown-item" href="javascript:;"><i
+										class="bx bx-tachometer"></i><span>Dashboard</span></a>
+								<a class="dropdown-item" href="javascript:;"><i
+										class="bx bx-wallet"></i><span>Earnings</span></a>
+								<a class="dropdown-item" href="javascript:;"><i
+										class="bx bx-cloud-download"></i><span>Downloads</span></a>
+								<div class="dropdown-divider mb-0"></div>	<a class="dropdown-item" href="javascript:;"><i
+										class="bx bx-power-off"></i><span>Logout</span></a>
+							</div>
+						</li>
+						<li class="nav-item dropdown dropdown-language">
+							<a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
+								<div class="lang d-flex">
+									<div><i class="flag-icon flag-icon-vn"></i>
+									</div>
+									<div><span>Vi</span>
+									</div>
+								</div>
+							</a>
+							<div class="dropdown-menu dropdown-menu-end">
+								<a class="dropdown-item" href="javascript:;"><i
+										class="flag-icon flag-icon-um"></i><span>English</span></a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+		<!--end header-->
+		<!--page-wrapper-->
+		<div class="page-wrapper">
+			<!--page-content-wrapper-->
+			<div class="page-content-wrapper">
+				<div class="page-content">
+					<!--breadcrumb-->
+					<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+						<div class="breadcrumb-title pe-3">Bán hàng</div>
+						<div class="ps-3">
+							<nav aria-label="breadcrumb">
+								<ol class="breadcrumb mb-0 p-0">
+									<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
+									</li>
+									<li class="breadcrumb-item active" aria-current="page">Thêm báo giá</li>
+								</ol>
+							</nav>
+						</div>
+					</div>
+					<!--end breadcrumb-->
+					<div class="card shadow-none border mb-0 radius-15">
+						<div class="card-body">
+							<form>
+								<h5 class="mb-3">Thông tin chung</h5>
+								<div class="row g-3 mb-4">
+									<div class="col-12 col-lg-6">
+										<div class="row g-3">
+												<div class="col-6">
+													<label for="validationServer01" class="form-label">Mã báo giá</label>
+													<input type="text" class="form-control is-valid" id="validationServer01" value="BG-01" required="">
+													<div class="valid-feedback">Rất tốt!</div>
+												</div>
+												<div class="col-6">
+													<label class="form-label">Người Phụ Trách</label>
+													<select class="single-select select2-hidden-accessible" data-select2-id="1" tabindex="-1" aria-hidden="true">
+														<option value="United States" data-select2-id="3">Nguyễn Văn Quang</option>
+														<option value="United Kingdom" data-select2-id="30">Lê Thúc Vinh</option>
+														<option value="Afghanistan" data-select2-id="31">Afghanistan</option>
+														<option value="Aland Islands" data-select2-id="32">Aland Islands</option>
+														<option value="Albania" data-select2-id="33">Albania</option>
+														<option value="Algeria" data-select2-id="34">Algeria</option>
+													</select>
+												</div>
+												<div class="col-6">
+													<label class="form-label">Ngày báo giá</label>
+													<input type="date" class="form-control is-invalid">
+												</div>
+												<div class="col-6">
+													<label class="form-label">Hạn Báo Giá</label>
+													<input type="date" class="form-control is-invalid">
+												</div>
+												<div class="col-6">
+													<label class="form-label">Giá Trị Đơn Hàng</label>
+													<input type="text" value="10.000.000" class="form-control is-valid">
+													<div class="valid-feedback">Rất tốt!</div>
+												</div>
+												<div class="col-6">
+													<label class="form-label">Trạng thái</label>
+													<select class="form-control" data-select2-id="1" tabindex="-1" aria-hidden="true">
+														<option value="">-- Chọn--</option>
+														<option value="">Mới gởi</option>
+														<option value="">Đàm phán</option>
+														<option value="">Chấm thuận</option>
+														<option value="">Hủy</option>
+														<option value="">chuyển thành đơn hàng</option>
+													</select>
+												</div>
+											</div>
+									</div>
+									<div class="col-12 col-lg-6">
+										<div class="row g-3">
+														<div class="col-7">
+															<label for="validationServer02" class="form-label">Email chính</label>
+															<input type="text" class="form-control is-invalid" value='emaikhach@gmail.com' id="validationServer03" aria-describedby="validationServer02Feedback" required="">
+															<div id="validationServer03Feedback" class="invalid-feedback">Vui lòng nhập dữ liệu</div>
+														</div>
+														<div class="col-5">
+															<label class="form-label">Hoặc</label>
+															<button class="btn btn-primary" type="submit">Thêm nhanh khách hàng</button>
+														</div>
+														<div class="col-12">
+															<label class="form-label">Chủ thể</label>
+															<input readonly type="text" value="Tên Khách or CTY Gét" class="form-control">
+														</div>
+														<div class="col-12">
+															<label for="validationServer02" class="form-label">Điện thoại</label>
+															<input readonly type="text" class="form-control is-invalid" id="validationServer03" aria-describedby="validationServer02Feedback" required="">
+
+														</div>
+														<div class="col-12">
+															<label class="form-label">Địa chỉ</label>
+															<input readonly type="text"  value="37 Bùi Quang Là, Phường An Hội Tây, TP HCM. " class="form-control">
+														</div>
+													</div>
+									</div>
+
+									<div class="col-12">
+										<label for="validationServer02" class="form-label">Ghi chú</label>
+										<textarea class="form-control" id="inputAddress" placeholder="Ghi chú..." rows="3"></textarea>
+									</div>
+								</div>
+
+								<hr>
+
+								<h5 class="mt-4 mb-3">File báo Giá Đính Kèm</h5>
+
+								<div class="row g-3 mb-4">
+									<div class="col-12">
+										<input id="fancy-file-upload" type="file" name="files" accept=".jpg, .png, image/jpeg, image/png" multiple>
+									</div>
+								</div>
+
+								<div class="row g-3 mb-4">
+									<div class="col-12">
+
+									</div>
+								</div>
+								<div class="row g-3 mb-4 text-center">
+									<div class="col-12">
+										<button class="btn btn-primary" type="submit">Lưu Dữ Liệu</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--end page-content-wrapper-->
+		</div>
+		<!--end page-wrapper-->
+		<!--start overlay-->
+		<div class="overlay toggle-btn-mobile"></div>
+		<!--end overlay-->
+		<!--Start Back To Top Button--> <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
+		<!--End Back To Top Button-->
+		<!--footer -->
+		<div class="footer">
+			<p class="mb-0">Syndash @2020 | Developed By : <a href="https://themeforest.net/user/codervent" target="_blank">codervent</a>
+			</p>
+		</div>
+		<!-- end footer -->
+	</div>
+	<!-- end wrapper -->
+
+	<!-- JavaScript -->
+	<!-- Bootstrap JS -->
+	<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+	<!--plugins-->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
+	<script src="assets/plugins/metismenu/js/metisMenu.min.js"></script>
+	<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+
+
+	<script src="assets/plugins/select2/js/select2.min.js"></script>
+	<script>
+		$('.single-select').select2({
+			theme: 'bootstrap4',
+			width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+			placeholder: $(this).data('placeholder'),
+			allowClear: Boolean($(this).data('allow-clear')),
+		});
+		$('.multiple-select').select2({
+			theme: 'bootstrap4',
+			width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+			placeholder: $(this).data('placeholder'),
+			allowClear: Boolean($(this).data('allow-clear')),
+		});
+	</script>
+
+
+	<!--Data Tables js-->
+	<script src="assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			//Default data table
+			$('#example').DataTable();
+			var table = $('#example2').DataTable({
+				lengthChange: false,
+				buttons: ['excel', 'pdf', 'colvis']
+			});
+			table.buttons().container().appendTo('#example2_wrapper .col-md-6:eq(0)');
+		});
+	</script>
+	<!-- App JS -->
+	<script src="assets/js/app.js"></script>
+</body>
+
+</html>

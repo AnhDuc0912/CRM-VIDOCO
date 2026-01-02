@@ -1,0 +1,27 @@
+{
+    "$schema": "https://json.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "format:php": "prettier --write '**/*.php'",
+        "format:blade": "prettier --write '**/*.blade.php'",
+        "format:js": "prettier --write '**/*.{js,jsx,ts,tsx,vue}'"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.21",
+        "axios": "^1.8.2",
+        "concurrently": "^9.0.1",
+        "laravel-vite-plugin": "^1.2.0",
+        "postcss": "^8.5.6",
+        "vite": "^6.2.4"
+    },
+    "dependencies": {
+        "@prettier/plugin-php": "^0.23.0",
+        "prettier": "^3.6.2",
+        "prettier-plugin-blade": "^2.1.21"
+    }
+}

@@ -1,0 +1,40 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use Illuminate\Support\ServiceProvider;
+
+class $CLASS$ extends ServiceProvider
+{
+    /**
+     * Register the service provider.
+     */
+    public function register(): void
+    {
+        $this->app->register(EventServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
+
+        // Register Repository bindings if needed
+        // $this->registerRepositories();
+    }
+
+    /**
+     * Register Repository bindings
+     */
+    protected function registerRepositories(): void
+    {
+        // Example:
+        // $this->app->bind(
+        //     \Modules\$STUDLY_NAME$\Repositories\Contracts\ExampleRepositoryInterface::class,
+        //     \Modules\$STUDLY_NAME$\Repositories\ExampleRepository::class
+        // );
+    }
+
+    /**
+     * Get the services provided by the provider.
+     */
+    public function provides(): array
+    {
+        return [];
+    }
+}

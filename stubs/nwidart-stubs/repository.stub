@@ -1,0 +1,16 @@
+<?php
+
+namespace $CLASS_NAMESPACE$;
+
+use Modules\Core\Repositories\BaseRepository;
+
+class $CLASS$ extends BaseRepository
+{
+    /**
+     * Specify Model class name
+     */
+    protected function getModelClass(): string
+    {
+        return \Modules\$STUDLY_NAME$\Models\$STUDLY_NAME$::class;
+    }
+}

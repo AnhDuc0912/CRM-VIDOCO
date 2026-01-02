@@ -1,0 +1,50 @@
+.select2-container--bootstrap4 .select2-selection--single .select2-selection__clear {
+    display: none !important;
+}
+
+.remove-product {
+    margin-top: 0 !important;
+    height: 38px;
+    width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 0.375rem;
+}
+
+.product-row {
+    align-items: end;
+}
+
+/* Button alignment in product row */
+.product-row .col-3 {
+    display: flex;
+    align-items: end;
+    padding-top: 0;
+}
+
+.product-row .col-3 .btn {
+    margin-top: 0;
+    height: 38px;
+    width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 0.375rem;
+}
+
+/* Error message positioning */
+.invalid-feedback {
+    display: none !important;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.invalid-feedback.show {
+    display: block !important;
+}

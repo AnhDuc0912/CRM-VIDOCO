@@ -1,0 +1,11 @@
+{
+    "name": "SellOrder",
+    "alias": "sellorder",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\SellOrder\\Providers\\SellOrderServiceProvider"
+    ],
+    "files": []
+}
