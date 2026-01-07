@@ -40,7 +40,8 @@
                 </div>
 
                 <div id="step-2" style="display:none">
-                    <form method="POST" action="{{ route('document.store') }}" enctype="multipart/form-data">
+                    <form id="documentForm" method="POST" action="{{ route('document.store') }}"
+                        enctype="multipart/form-data">
                         @csrf
 
                         <h5 class="fw-bold mb-3">Thông tin văn bản</h5>
@@ -48,6 +49,7 @@
                         <div class="mb-3">
                             <label class="form-label">Tiêu đề *</label>
                             <input type="text" name="title" class="form-control" required>
+                            <div class="invalid-feedback"></div>
                         </div>
 
                         <div class="row mb-3 gx-3">
@@ -63,8 +65,8 @@
                                 <label class="form-label">Kho lưu trữ</label>
 
                                 <div class="structure-picker" data-type="storage">
-                                    <input type="text" class="form-control structure-input"
-                                        placeholder="Chọn kho lưu trữ" readonly>
+                                    <input type="text" class="form-control structure-input" required
+                                        placeholder="Chọn kho lưu trữ">
 
                                     <input type="hidden" name="storage_id" id="storage_id">
 
@@ -72,18 +74,16 @@
                                         <div class="structure-path"></div>
                                         <div class="structure-list list-group"></div>
                                     </div>
+                                    <div class="invalid-feedback" data-for="storage_id"></div>
                                 </div>
                             </div>
-
-
-
 
                             <div class="col-md-4">
                                 <label class="form-label">Nhóm nội dung</label>
 
                                 <div class="structure-picker" data-type="content_group">
-                                    <input type="text" class="form-control structure-input"
-                                        placeholder="Chọn nhóm nội dung" readonly>
+                                    <input type="text" class="form-control structure-input" required
+                                        placeholder="Chọn nhóm nội dung">
 
                                     <input type="hidden" name="content_group_id" id="content_group_id">
 
@@ -91,6 +91,7 @@
                                         <div class="structure-path"></div>
                                         <div class="structure-list list-group"></div>
                                     </div>
+                                    <div class="invalid-feedback" data-for="content_group_id"></div>
                                 </div>
                             </div>
 
@@ -103,8 +104,7 @@
                                 <label class="form-label">Thư mục</label>
 
                                 <div class="structure-picker" data-type="folder">
-                                    <input type="text" class="form-control structure-input" placeholder="Chọn thư mục"
-                                        readonly>
+                                    <input type="text" class="form-control structure-input" required placeholder="Chọn thư mục">
 
                                     <input type="hidden" name="folder_id" id="folder_id">
 
@@ -112,6 +112,7 @@
                                         <div class="structure-path"></div>
                                         <div class="structure-list list-group"></div>
                                     </div>
+                                    <div class="invalid-feedback" data-for="folder_id"></div>
                                 </div>
                             </div>
 
@@ -121,8 +122,8 @@
                                 <label class="form-label">Sổ văn bản</label>
 
                                 <div class="structure-picker" data-type="book">
-                                    <input type="text" class="form-control structure-input" placeholder="Chọn sổ văn bản"
-                                        readonly>
+                                    <input type="text" class="form-control structure-input" required
+                                        placeholder="Chọn sổ văn bản">
 
                                     <input type="hidden" name="book_id" id="book_id">
 
@@ -130,6 +131,7 @@
                                         <div class="structure-path"></div>
                                         <div class="structure-list list-group"></div>
                                     </div>
+                                    <div class="invalid-feedback" data-for="book_id"></div>
                                 </div>
                             </div>
 
@@ -139,6 +141,7 @@
                         <div class="mb-3">
                             <label class="form-label">Mã số văn bản</label>
                             <input type="text" name="code" id="code" class="form-control" readonly>
+                            <div class="invalid-feedback"></div>
                         </div>
 
                         <div id="dynamic-fields"></div>
@@ -146,10 +149,12 @@
                         <div class="mb-3">
                             <label class="form-label">Nhãn</label>
                             <input type="text" name="tag" class="form-control">
+                            <div class="invalid-feedback"></div>
                         </div>
 
                         <h5 class="fw-bold mt-4">Nội dung</h5>
                         <textarea name="content" rows="6" class="form-control"></textarea>
+                        <div class="invalid-feedback"></div>
 
                         <h5 class="fw-bold mt-4">Đính kèm</h5>
                         <div class="card radius-15">
@@ -170,14 +175,17 @@
                             <div class="col-md-4">
                                 <label class="form-label">Ngày ban hành</label>
                                 <input type="date" name="issue_date" class="form-control">
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Ngày hiệu lực</label>
                                 <input type="date" name="effective_date" class="form-control">
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Ngày hết hạn</label>
                                 <input type="date" name="expiration_date" class="form-control">
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
 
@@ -294,6 +302,14 @@
                 document.getElementById('document_type_text').value =
                     DOCUMENT_TYPE_LABEL[type] ?? '';
 
+                // Clear previous validation markers in the form
+                document.querySelectorAll('#documentForm .is-invalid').forEach(el => el.classList.remove(
+                    'is-invalid'));
+                document.querySelectorAll('#documentForm .invalid-feedback').forEach(f => {
+                    f.textContent = '';
+                    f.classList.remove('show');
+                });
+
                 document.getElementById('step-1').style.display = 'none';
                 document.getElementById('step-2').style.display = 'block';
 
@@ -361,6 +377,14 @@
                 document.getElementById('document_type_text').value =
                     DOCUMENT_TYPE_LABEL[type];
 
+                // Clear previous validation markers in the form
+                document.querySelectorAll('#documentForm .is-invalid').forEach(el => el.classList.remove(
+                    'is-invalid'));
+                document.querySelectorAll('#documentForm .invalid-feedback').forEach(f => {
+                    f.textContent = '';
+                    f.classList.remove('show');
+                });
+
                 document.getElementById('step-1').style.display = 'none';
                 document.getElementById('step-2').style.display = 'block';
 
@@ -386,7 +410,7 @@
 <div class="row mb-3">
     <div class="col-md-12">
         <label class="form-label">Gửi từ</label>
-        <select name="from_unit_id" class="form-select">
+        <select required name="from_unit_id" class="form-select">
             <option value="">-- Chọn --</option>
             @foreach ($users ?? [] as $u)
                 <option value="{{ $u->id }}">{{ $u->full_name }}</option>
@@ -398,16 +422,17 @@
 <div class="row mb-3">
     <div class="col-md-6">
         <label class="form-label">Thông báo email</label>
-        <select name="email_notice" class="form-select">
+        <select required name="email_notice" class="form-select">
             <option value="1">Có</option>
             <option value="0">Không</option>
         </select>
     </div>
     <div class="col-md-6">
         <label class="form-label">Người theo dõi</label>
-        <select class="single-select2" name="followers[]" multiple>
+        <select required class="single-select2" name="followers[]" multiple>
             ${usersHtml}
         </select>
+        <div class="invalid-feedback"></div>
     </div>
 </div>
 
@@ -434,9 +459,10 @@
 <div class="row">
     <div class="col-md-12">
         <label class="form-label">Gửi đến (nội bộ)</label>
-        <select class="single-select2" name="to_internal[]" multiple required>
+        <select required class="single-select2" name="to_internal[]" multiple required>
             ${usersHtml}
         </select>
+        <div class="invalid-feedback"></div>
     </div>
 </div>`;
             }
@@ -450,7 +476,7 @@
 
     <!-- Loại hợp đồng -->
     <div class="col-md-6 mt-2">
-        <select name="sender[contract_type]" class="form-select">
+        <select required name="sender[contract_type]" class="form-select">
             <option value="">-- Loại hợp đồng --</option>
             <option value="hd_kinh_te">Hợp đồng kinh tế</option>
             <option value="hd_nguyen_tac">Hợp đồng nguyên tắc</option>
@@ -493,9 +519,10 @@
 <div class="row">
     <div class="col-md-12">
         <label class="form-label">Người nhận</label>
-            <select class="single-select2" name="receivers[]" multiple required>
+            <select required class="single-select2" name="receivers[]" multiple required>
               ${usersHtml}
         </select>
+        <div class="invalid-feedback"></div>
     </div>
 </div>`;
             }
@@ -510,7 +537,7 @@
 
     <!-- Loại hợp đồng -->
     <div class="col-md-6 mt-2">
-        <select name="contract_type" class="form-select">
+        <select required name="contract_type" class="form-select">
             <option value="">-- Loại hợp đồng --</option>
             <option value="1">Hợp đồng kinh tế</option>
             <option value="2">Hợp đồng nguyên tắc</option>
@@ -531,14 +558,24 @@
 <div class="row">
     <div class="col-md-12">
         <label class="form-label">Người nhận</label>
-      <select class="single-select2" name="receivers[]" multiple required>
+      <select required class="single-select2" name="receivers[]" multiple required>
             ${usersHtml}
         </select>
+        <div class="invalid-feedback"></div>
+
     </div>
 </div>`;
             }
 
             const container = document.getElementById('dynamic-fields');
+
+            // Clear previous dynamic content and any validation markers
+            container.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            container.querySelectorAll('.invalid-feedback').forEach(f => {
+                f.textContent = '';
+                f.classList.remove('show');
+            });
+
             container.innerHTML = html;
             initSelect2(container);
         }
@@ -682,6 +719,7 @@
             loadStructure('book');
         });
     </script>
+
     <style>
         .ck-editor__editable_inline {
             min-height: 250px;
@@ -725,4 +763,7 @@
             cursor: pointer;
         }
     </style>
+
+
+    <script src="{{ Module::asset('document:js/validator.js') }}"></script>
 @endpush

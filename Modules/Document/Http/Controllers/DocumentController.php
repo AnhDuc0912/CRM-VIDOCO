@@ -73,7 +73,8 @@ class DocumentController extends Controller
     {
         $storages = DocumentStructure::where('type', 'storage')->get();
         $contentGroups = DocumentStructure::where('type', 'content_group')->get();
-        $types = DocumentType::get();
+        // DocumentType table doesn't have a `type` column — return all types
+        $content_groups = DocumentType::all();
         $folders = DocumentStructure::where('type', 'folder')->get();
         $books = DocumentStructure::where('type', 'book')->get();
         $users = Employee::orderBy('full_name')->get();
@@ -85,7 +86,7 @@ class DocumentController extends Controller
             'folders',
             'books',
             'users',
-            'types',
+            'content_groups',
             'customers'
         ));
     }
@@ -189,7 +190,7 @@ class DocumentController extends Controller
                     $user = Employee::find($uid);
 
                     if ($user?->email_work) {
-                        Mail::to($user->email_workl)->queue(
+                        Mail::to($user->email_work)->queue(
                             new DocumentCreatedMail($document, Auth::user()->employee)
                         );
                     }
