@@ -26,8 +26,7 @@
                 <ul>
                     <li> <a href="{{ route('dashboard') }}"><i class="bx bx-right-arrow-alt"></i>Tổng Quan</a>
                     </li>
-                    <li> <a href="#"><i class="bx bx-right-arrow-alt"></i>Kinh
-                            doanh</a>
+                    <li> <a href="{{ route('dashboard.business') }}"><i class="bx bx-right-arrow-alt"></i>Kinh doanh</a>
                     </li>
                 </ul>
             </li>

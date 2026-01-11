@@ -194,7 +194,20 @@ class AuthController extends Controller
 
         $stats = app(\Modules\Customer\Services\CustomerService::class)->getBusinessStats(Auth::user(), $filters);
         $employees = $this->employeeService->getEmployeesByPosition("Kinh Doanh");
-
         return view('core::dashboard', compact('stats', 'employees', 'filters'));
+    }
+
+    public function dashboard_business()
+    {
+        can(PermissionEnum::DASHBOARD_VIEW);
+        $filters = [
+            'sales_person_id' => request('sales_person_id'),
+            'person_incharge_id' => request('person_incharge_id'),
+        ];
+
+        $stats = app(\Modules\Customer\Services\CustomerService::class)->getBusinessStats(Auth::user(), $filters);
+        $employees = $this->employeeService->getEmployeesByPosition("Kinh Doanh");
+
+        return view('core::dashboard-business', compact('stats', 'employees', 'filters'));
     }
 }

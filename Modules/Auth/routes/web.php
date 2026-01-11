@@ -23,4 +23,5 @@ Route::middleware('auth')->group(function () {
 
     // Redirect root to employees
     Route::get('/', [AuthController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard-business', [AuthController::class, 'dashboard_business'])->name('dashboard.business');
 });

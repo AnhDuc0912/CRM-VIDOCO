@@ -19,5 +19,6 @@
     "DayOff": true,
     "Log": true,
     "TimeKeeping": true,
-    "Document": true
+    "Document": true,
+    "Statistic": true
 }
