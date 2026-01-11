@@ -8,6 +8,7 @@ use Modules\Core\Http\Requests\UpdatePermissionRequest;
 use Modules\Core\Services\AuthorizationService;
 use Modules\Department\Models\Department;
 use Modules\Employee\Models\Employee;
+use Modules\Employee\Services\EmployeeService;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -15,6 +16,7 @@ class AuthorizationController extends Controller
 {
     public function __construct(
         private AuthorizationService $authorizationService,
+        private EmployeeService $employeeService,
     ) {}
 
     /**
@@ -50,7 +52,9 @@ class AuthorizationController extends Controller
             $grouped[$resourceLabel][$permission->name] = $actionLabel;
         }
 
-        return view('core::authorization.index', compact('roles', 'permissions', 'employees', 'departments', 'grouped'));
+        $salesPersons = $this->employeeService->getEmployeesByPosition('Kinh Doanh');
+
+        return view('core::authorization.index', compact('roles', 'permissions', 'employees', 'departments', 'grouped', 'salesPersons'));
     }
 
     /**

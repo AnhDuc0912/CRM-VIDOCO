@@ -16,7 +16,9 @@ class CustomerRepository extends BaseRepository implements CustomerRepositoryInt
 
     public function getAllCustomers(): Collection
     {
-        return $this->model->with(['services'])->get();
+        return $this->model
+            ->with(['services', 'orders.orderServices'])
+            ->get();
     }
 
     public function getCustomerById(int $id): Customer

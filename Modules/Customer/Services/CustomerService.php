@@ -6,6 +6,9 @@ use App\Helpers\FileHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
+use Carbon\Carbon;
+use Modules\Core\Enums\PermissionEnum;
 use Modules\Core\Enums\TemplateCodeEnum;
 use Modules\Customer\Repositories\Contracts\CustomerRepositoryInterface;
 use Modules\Customer\Repositories\Contracts\CustomerBankAccountRepositoryInterface;
@@ -26,9 +29,187 @@ class CustomerService
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAllCustomers()
+    public function getAllCustomers(?string $segment = null)
     {
-        return $this->customerRepository->getAllCustomers();
+        $customers = $this->customerRepository->getAllCustomers();
+
+        $today = now();
+
+        $customers->each(function ($customer) use ($today) {
+            $orderServices = $customer->orders?->flatMap->orderServices ?? collect();
+            $hasOrders = $orderServices->count() > 0;
+
+            $activeCount = $orderServices->filter(function ($service) use ($today) {
+                // Treat missing end_date as active
+                if (is_null($service->end_date)) {
+                    return true;
+                }
+                return $service->end_date >= $today;
+            })->count();
+
+            if ($activeCount > 0) {
+                $customer->segment_tag = 'using';
+                $customer->segment_label = 'Khách hàng đang sử dụng';
+            } elseif ($hasOrders) {
+                $customer->segment_tag = 'stopped';
+                $customer->segment_label = 'Khách hàng ngừng sử dụng';
+            } else {
+                $customer->segment_tag = 'lead';
+                $customer->segment_label = 'Khách liên hệ';
+            }
+        });
+
+        if ($segment && $segment !== 'all') {
+            $customers = $customers->filter(fn ($c) => $c->segment_tag === $segment)->values();
+        }
+
+        return $customers;
+    }
+
+    /**
+     * Get customers visible to the given user
+     * - If user has CUSTOMER_SHOW_ALL or CUSTOMER_VIEW: return all customers
+     * - If user has CUSTOMER_INCHARGE only: return customers where user is person_incharge
+     * - Else: return customers assigned to user (sales_person or person_incharge)
+     *
+     * @param \Illuminate\Contracts\Auth\Authenticatable|null $user
+     * @param string|null $segment
+     * @param array $filters
+     * @return \Illuminate\Support\Collection
+     */
+    public function getCustomersForUser($user, ?string $segment = null, array $filters = [])
+    {
+        $customers = $this->getAllCustomers($segment);
+
+        // Full permissions: see all customers
+        if ($user && (Gate::allows(PermissionEnum::CUSTOMER_SHOW_ALL) || Gate::allows(PermissionEnum::CUSTOMER_VIEW))) {
+            return $this->applyCustomerFilters($customers, $filters);
+        }
+
+        // INCHARGE permission only: see only customers where user is person_incharge
+        if ($user && Gate::allows(PermissionEnum::CUSTOMER_INCHARGE)) {
+            $employeeId = $user->employee?->id ?? null;
+            if (!$employeeId) {
+                return collect();
+            }
+
+            $customers = $customers->filter(function ($c) use ($employeeId) {
+                return $c->person_incharge === $employeeId;
+            })->values();
+            return $this->applyCustomerFilters($customers, $filters);
+        }
+
+        // Default: see customers as sales_person or person_incharge
+        $employeeId = $user?->employee?->id ?? null;
+        if (!$employeeId) {
+            return collect();
+        }
+
+        $customers = $customers->filter(function ($c) use ($employeeId) {
+            return ($c->sales_person === $employeeId) || ($c->person_incharge === $employeeId);
+        })->values();
+
+        return $this->applyCustomerFilters($customers, $filters);
+    }
+
+    /**
+     * Apply optional filters on customers collection
+     */
+    private function applyCustomerFilters($customers, array $filters)
+    {
+        if (!empty($filters['sales_person_id'])) {
+            $salesId = (int) $filters['sales_person_id'];
+            $customers = $customers->filter(fn($c) => $c->sales_person === $salesId)->values();
+        }
+
+        if (!empty($filters['person_incharge_id'])) {
+            $inchargeId = (int) $filters['person_incharge_id'];
+            $customers = $customers->filter(fn($c) => $c->person_incharge === $inchargeId)->values();
+        }
+
+        return $customers;
+    }
+
+    /**
+     * Business statistics for dashboard (respecting permissions and filters)
+     */
+    public function getBusinessStats($user, array $filters = []): array
+    {
+        $customers = $this->getCustomersForUser($user, null, $filters);
+
+        $totalCustomers = $customers->count();
+        $personalCount = $customers->where('customer_type', CustomerTypeEnum::PERSONAL)->count();
+        $companyCount = $customers->where('customer_type', CustomerTypeEnum::COMPANY)->count();
+
+        $usingCount = $customers->where('segment_tag', 'using')->count();
+        $leadCount = $customers->where('segment_tag', 'lead')->count();
+        $stoppedCount = $customers->where('segment_tag', 'stopped')->count();
+
+        $monthlyNew = $customers
+            ->filter(fn($c) => $c->created_at)
+            ->groupBy(fn($c) => $c->created_at->format('Y-m'))
+            ->map->count()
+            ->sortKeys()
+            ->toArray();
+
+        $quarterlyNew = $customers
+            ->filter(fn($c) => $c->created_at)
+            ->groupBy(function ($c) {
+                $year = $c->created_at->format('Y');
+                $quarter = (int) ceil($c->created_at->format('n') / 3);
+                return $year . '-Q' . $quarter;
+            })
+            ->map->count()
+            ->sortKeys()
+            ->toArray();
+
+        $yearlyNew = $customers
+            ->filter(fn($c) => $c->created_at)
+            ->groupBy(fn($c) => $c->created_at->format('Y'))
+            ->map->count()
+            ->sortKeys()
+            ->toArray();
+
+        $totalRevenue = $customers
+            ->flatMap->orders
+            ->flatMap->orderServices
+            ->sum('total_price');
+
+        $customerRevenue = $customers->mapWithKeys(function ($c) {
+            $revenue = $c->orders
+                ->flatMap->orderServices
+                ->sum('total_price');
+
+            $displayName = $c->customer_type == CustomerTypeEnum::COMPANY
+                ? ($c->company_name ?: $c->code)
+                : trim(($c->last_name ?? '') . ' ' . ($c->first_name ?? ''));
+
+            return [$c->id => [
+                'id' => $c->id,
+                'name' => $displayName ?: $c->code,
+                'revenue' => $revenue,
+            ]];
+        });
+
+        $topCustomers = $customerRevenue
+            ->sortByDesc('revenue')
+            ->take(10)
+            ->values()
+            ->toArray();
+
+        return [
+            'total_customers' => $totalCustomers,
+            'personal_count' => $personalCount,
+            'company_count' => $companyCount,
+            'using_count' => $usingCount,
+            'lead_count' => $leadCount,
+            'stopped_count' => $stoppedCount,
+            'monthly_new' => $monthlyNew,
+            'quarterly_new' => $quarterlyNew,
+            'yearly_new' => $yearlyNew,
+            'total_revenue' => $totalRevenue,
+            'top_customers' => $topCustomers,
+        ];
     }
 
     /**
@@ -331,6 +512,42 @@ class CustomerService
             ]);
 
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi download files: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Transfer all customers from one employee to another
+     * @param int $fromEmployeeId - employee ID to transfer FROM
+     * @param int $toEmployeeId - employee ID to transfer TO
+     * @param string $type - 'sales_person' or 'person_incharge'
+     * @return int - number of customers transferred
+     */
+    public function transferCustomersByEmployee(int $fromEmployeeId, int $toEmployeeId, string $type = 'sales_person')
+    {
+        if ($fromEmployeeId === $toEmployeeId) {
+            throw new \Exception('Nhân viên nguồn và đích không thể giống nhau');
+        }
+
+        DB::beginTransaction();
+        try {
+            $field = $type === 'person_incharge' ? 'person_incharge' : 'sales_person';
+            
+            $count = $this->customerRepository
+                ->getModel()
+                ->where($field, $fromEmployeeId)
+                ->update([$field => $toEmployeeId]);
+
+            DB::commit();
+            return $count;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Transfer customers error', [
+                'from_employee_id' => $fromEmployeeId,
+                'to_employee_id' => $toEmployeeId,
+                'type' => $type,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
         }
     }
 }

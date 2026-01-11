@@ -40,6 +40,8 @@ enum PermissionEnum: string
     const CUSTOMER_UPDATE = 'customer.update';
     const CUSTOMER_DELETE = 'customer.delete';
     const CUSTOMER_SHOW = 'customer.show';
+    const CUSTOMER_SHOW_ALL = 'customer.show_all';
+    const CUSTOMER_INCHARGE = 'customer.incharge';
 
     // Order
     const ORDER_VIEW = 'order.view';
@@ -131,6 +133,8 @@ enum PermissionEnum: string
         'download_files' => 'Tải file',
         'delete_files' => 'Xóa file',
         'show' => 'Xem chi tiết',
+        'show_all' => 'Xem chi tiết tất cả',
+        'incharge' => 'Phụ trách',
         'update_status' => 'Cập nhật trạng thái',
         'convert_to_order' => 'Chuyển thành đơn hàng',
         'approve' => 'Duyệt nghỉ phép',
@@ -181,6 +185,8 @@ enum PermissionEnum: string
         return [
             self::CUSTOMER_VIEW,
             self::CUSTOMER_SHOW,
+            self::CUSTOMER_SHOW_ALL,
+            self::CUSTOMER_INCHARGE,
             self::CUSTOMER_CREATE,
             self::CUSTOMER_UPDATE,
             self::CUSTOMER_DELETE,
@@ -251,6 +257,42 @@ enum PermissionEnum: string
             self::DAY_OFF_DELETE,
             self::DAY_OFF_APPROVE,
             self::DAY_OFF_VIEW_ALL,
+        ];
+    }
+
+    // Project
+    public static function getProjectPermissions()
+    {
+        return [
+            self::PROJECT_VIEW,
+            self::PROJECT_SHOW,
+            self::PROJECT_CREATE,
+            self::PROJECT_UPDATE,
+            self::PROJECT_DELETE,
+        ];
+    }
+
+    // Work
+    public static function getWorkPermissions()
+    {
+        return [
+            self::WORK_VIEW,
+            self::WORK_SHOW,
+            self::WORK_CREATE,
+            self::WORK_UPDATE,
+            self::WORK_DELETE,
+        ];
+    }
+
+    // Comment
+    public static function getCommentPermissions()
+    {
+        return [
+            self::COMMENT_VIEW,
+            self::COMMENT_SHOW,
+            self::COMMENT_CREATE,
+            self::COMMENT_UPDATE,
+            self::COMMENT_DELETE,
         ];
     }
 }

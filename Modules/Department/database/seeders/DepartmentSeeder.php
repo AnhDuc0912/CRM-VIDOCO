@@ -40,5 +40,9 @@ class DepartmentSeeder extends Seeder
             'name' => 'Phòng Nhân sự',
             'description' => 'Phòng Nhân sự',
         ]);
+        Department::create([
+            'name' => 'Phòng kinh doanh',
+            'description' => 'Phòng kinh doanh',
+        ]);
     }
 }

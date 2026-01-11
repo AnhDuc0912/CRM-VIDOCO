@@ -273,7 +273,7 @@
             <li>
                 <a href="{{ route('customers.notification') }}" class="">
                     <div class="parent-icon icon-color-9"><i class="bx bx-envelope"></i>
-                    </div>
+                    </div> 
                     <div class="menu-title">Thông báo khách hàng</div>
                 </a>
             </li>
@@ -333,6 +333,8 @@
                     </a>
                     <ul>
                         <li> <a href="{{ route('authorization') }}"><i class="bx bx-right-arrow-alt"></i>Phân quyền </a>
+                        </li>
+                         <li> <a href="{{ route('transfer-customers.form') }}"><i class="bx bx-right-arrow-alt"></i>Chuyển khách hàng</a>
                         </li>
                     </ul>
                 </li>

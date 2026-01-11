@@ -14,12 +14,21 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Modules\Core\Enums\AccountStatusEnum;
 use Modules\Core\Enums\PermissionEnum;
+use Modules\Employee\Services\EmployeeService;
 
 class AuthController extends Controller
 {
     /**
      * Show login form
      */
+    protected $employeeService;
+
+    public function __construct(
+        EmployeeService $employeeService,
+    ) {
+        $this->employeeService = $employeeService;
+    }
+
     public function showLoginForm()
     {
         return view('auth::login');
@@ -178,7 +187,14 @@ class AuthController extends Controller
     public function dashboard()
     {
         can(PermissionEnum::DASHBOARD_VIEW);
+        $filters = [
+            'sales_person_id' => request('sales_person_id'),
+            'person_incharge_id' => request('person_incharge_id'),
+        ];
 
-        return view('core::dashboard');
+        $stats = app(\Modules\Customer\Services\CustomerService::class)->getBusinessStats(Auth::user(), $filters);
+        $employees = $this->employeeService->getEmployeesByPosition("Kinh Doanh");
+
+        return view('core::dashboard', compact('stats', 'employees', 'filters'));
     }
 }

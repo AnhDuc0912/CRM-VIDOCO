@@ -55,6 +55,25 @@
                 </div>
             </div>
             <hr />
+            <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
+                <form method="GET" class="d-flex align-items-center gap-2 flex-wrap">
+                    <label class="mb-0 fw-semibold">Phân loại:</label>
+                    @php
+                        $segment = $segment ?? request('segment');
+                    @endphp
+                    <select name="segment" class="form-select" style="width: 240px;">
+                        <option value="all" {{ ($segment ?? 'all') === 'all' ? 'selected' : '' }}>Tất cả</option>
+                        <option value="using" {{ ($segment ?? '') === 'using' ? 'selected' : '' }}>Khách hàng đang sử dụng</option>
+                        <option value="lead" {{ ($segment ?? '') === 'lead' ? 'selected' : '' }}>Khách liên hệ</option>
+                        <option value="stopped" {{ ($segment ?? '') === 'stopped' ? 'selected' : '' }}>Khách hàng ngừng sử dụng</option>
+                    </select>
+                    <button class="btn btn-primary">Lọc</button>
+                    @if(($segment ?? 'all') !== 'all')
+                        <a class="btn btn-light border" href="{{ route('customers.index') }}">Xóa lọc</a>
+                    @endif
+                </form>
+            </div>
+
             <div class="table-responsive">
                 <table id="customers-table" class="table table-striped table-bordered" style="width:100%">
                     <thead>
@@ -65,6 +84,7 @@
                             <th>Loại khách hàng</th>
                             <th>Tên chủ thể</th>
                             <th>Email/Điện thoại</th>
+                            <th>Phân loại</th>
                             <th>Chức năng</th>
                         </tr>
                     </thead>
@@ -103,6 +123,21 @@
                                     {{ $customer->phone ?? '' }}
                                 </td>
                                 <td>
+                                    @php
+                                        $segmentTag = $customer->segment_tag ?? null;
+                                        $segmentLabel = $customer->segment_label ?? '';
+                                    @endphp
+                                    @if($segmentTag === 'using')
+                                        <span class="badge bg-success">{{ $segmentLabel }}</span>
+                                    @elseif($segmentTag === 'lead')
+                                        <span class="badge bg-info text-dark">{{ $segmentLabel }}</span>
+                                    @elseif($segmentTag === 'stopped')
+                                        <span class="badge bg-warning text-dark">{{ $segmentLabel }}</span>
+                                    @else
+                                        <span class="badge bg-secondary">Không xác định</span>
+                                    @endif
+                                </td>
+                                <td>
                                     <div class="d-flex">
                                         @can(PermissionEnum::CUSTOMER_SHOW)
                                             <a href="{{ route('customers.show', $customer->id) }}" title="Xem hồ sơ"
@@ -138,7 +173,7 @@
                 searching: true,
                 buttons: ['excel', 'pdf'],
                 columnDefs: [{
-                    targets: [4],
+                    targets: [4,6],
                     orderable: false
                 }],
                 language: {

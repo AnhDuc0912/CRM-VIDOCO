@@ -49,6 +49,63 @@ class EmployeeService
     }
 
     /**
+     * Get all employees by department
+     *
+     * @param string $departmentName
+     * @return Collection
+     */
+    public function getEmployeesByDepartment($departmentName)
+    {
+        $employees = $this->employeeRepository->getAllEmployees()
+            ->filter(function ($employee) use ($departmentName) {
+                return $employee->department?->name === $departmentName;
+            });
+
+        /** @var \Modules\User\Models\User $user */
+        $user = Auth::user();
+
+        if ($user && $user->hasRole(RoleEnum::EMPLOYEE)) {
+            $employees = $employees->filter(function ($employee) use ($user) {
+                return $employee->user?->id === $user->id;
+            });
+        }
+
+        return $employees;
+    }
+
+    /**
+     * Get all employees by position
+     *
+     * @param string $positionName
+     * @return Collection
+     */
+    public function getEmployeesByPosition($positionName)
+    {
+        // Get position by name
+        $position = \Modules\Position\Models\Position::where('name', $positionName)->first();
+        
+        if (!$position) {
+            return collect([]);
+        }
+
+        $employees = $this->employeeRepository->getAllEmployees()
+            ->filter(function ($employee) use ($position) {
+                return $employee->current_position === $position->id;
+            });
+
+        /** @var \Modules\User\Models\User $user */
+        $user = Auth::user();
+
+        if ($user && $user->hasRole(RoleEnum::EMPLOYEE)) {
+            $employees = $employees->filter(function ($employee) use ($user) {
+                return $employee->user?->id === $user->id;
+            });
+        }
+
+        return $employees;
+    }
+
+    /**
      * Get employee by id
      *
      * @param int $id

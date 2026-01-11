@@ -54,6 +54,18 @@ class PermissionSeeder extends Seeder
 
             // Sell Order
             ...PermissionEnum::getSellOrderPermissions(),
+
+            // Project
+            ...PermissionEnum::getProjectPermissions(),
+
+            // Work
+            ...PermissionEnum::getWorkPermissions(),
+
+            // Comment
+            ...PermissionEnum::getCommentPermissions(),
+
+            // Day Off
+            ...PermissionEnum::getDayOffPermissions(),
         ];
 
         foreach ($permissions as $permission) {

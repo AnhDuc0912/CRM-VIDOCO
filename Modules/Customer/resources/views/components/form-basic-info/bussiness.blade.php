@@ -1,18 +1,21 @@
 @use('Modules\Core\Enums\GenderEnum')
-@use('Modules\Customer\Enums\SourceCustomerEnum')
 @use('Modules\Customer\Enums\SalutationEnum')
 
 <div id="form-company" style="display:none;">
     <div class="row g-3 mb-4">
         <div class="col-3">
-            <label class="form-label required">Nguồn khách hàng</label>
+            <label class="form-label required">Nguồn khách hàng
+                <a href="{{ route('customer-sources.index') }}" target="_blank" title="Quản lý nguồn">
+                    <i class="bx bx-link-external font-14"></i>
+                </a>
+            </label>
             <select class="form-select" name="company[source_customer]"
                 {{ request()->routeIs('customers.show') ? 'disabled' : '' }}>
                 <option value="">-- Lựa chọn --</option>
-                @foreach (SourceCustomerEnum::getLabel() as $key => $value)
-                    <option value="{{ $key }}"
-                        {{ old('company.source_customer') ? (old('company.source_customer') == $key ? 'selected' : '') : (!empty($customer) ? ($customer->source_customer == $key ? 'selected' : '') : '') }}>
-                        {{ $value }}</option>
+                @foreach ($customerSources ?? [] as $source)
+                    <option value="{{ $source->name }}"
+                        {{ old('company.source_customer') ? (old('company.source_customer') == $source->name ? 'selected' : '') : (!empty($customer) ? ($customer->source_customer == $source->name ? 'selected' : '') : '') }}>
+                        {{ $source->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -59,9 +62,10 @@
                 value="{{ old('company.founding_date') ?? (!empty($customer) ? $customer->founding_date : '') }}">
         </div>
         <div class="col-3">
-            <label class="form-label">Địa chỉ công ty</label>
+            <label class="form-label">Chức vụ</label>
             <input type="text" class="form-control" name="company[company_address]"
                 {{ request()->routeIs('customers.show') ? 'disabled' : '' }}
+                placeholder="VD: Giám đốc, Trưởng phòng..."
                 value="{{ old('company.company_address') ?? (!empty($customer) ? $customer->company_address : '') }}">
         </div>
         <div class="col-3">

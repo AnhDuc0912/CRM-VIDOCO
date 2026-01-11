@@ -33,6 +33,7 @@ class AuthorizationService
                 $employee->user?->syncPermissions($data['permissions']);
             });
         }
+        
 
         if (!empty($data['role_id'])) {
             $role = Role::find($data['role_id']);

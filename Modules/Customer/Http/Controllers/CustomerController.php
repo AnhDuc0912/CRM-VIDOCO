@@ -4,10 +4,14 @@ namespace Modules\Customer\Http\Controllers;
 
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Enums\PermissionEnum;
+use Modules\Core\Enums\RoleEnum;
 use Modules\Customer\Http\Requests\UpdateOrCreateCustomerRequest;
 use Modules\Customer\Models\CustomerNotificationHistories;
+use Modules\Customer\Models\CustomerSource;
 use Modules\Employee\Services\EmployeeService;
 use Modules\Customer\Services\CustomerService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class CustomerController extends Controller
 {
@@ -26,7 +30,10 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        can(PermissionEnum::CUSTOMER_VIEW);
+        // Allow either general view or incharge-only access
+        if (!Gate::allows(PermissionEnum::CUSTOMER_VIEW) && !Gate::allows(PermissionEnum::CUSTOMER_INCHARGE)) {
+            abort(403);
+        }
         set_breadcrumbs([
             [
                 'title' => 'Khách hàng',
@@ -34,9 +41,9 @@ class CustomerController extends Controller
             ],
         ]);
 
-        $customers = $this->customerService->getAllCustomers();
-
-        return view('customer::index', compact('customers'));
+        $segment = request('segment');
+        $customers = $this->customerService->getCustomersForUser(Auth::user(), $segment);
+        return view('customer::index', compact('customers', 'segment'));
     }
 
     /**
@@ -56,9 +63,10 @@ class CustomerController extends Controller
             ],
         ]);
 
-        $salesPersons = $this->employeeService->getAllEmployees();
+        $salesPersons = $this->employeeService->getEmployeesByPosition('Kinh Doanh');
+        $customerSources = CustomerSource::where('is_active', 1)->get();
 
-        return view('customer::create', compact('salesPersons'));
+        return view('customer::create', compact('salesPersons', 'customerSources'));
     }
 
     /**
@@ -72,12 +80,14 @@ class CustomerController extends Controller
         $request->validate([
             'personal.email'     => 'nullable|email|unique:customers,email',
             'personal.phone'     => 'nullable|unique:customers,phone',
+            'personal.identity_card' => 'nullable|unique:customers,identity_card',
             'personal.invoice_tax_code'  => 'nullable|unique:customers,tax_code',
         ]);
 
         $request->validate([
             'company.email'     => 'nullable|email|unique:customers,email',
             'company.phone'     => 'nullable|unique:customers,phone',
+            'company.identity_card' => 'nullable|unique:customers,identity_card',
             'company.invoice_tax_code'  => 'nullable|unique:customers,tax_code',
         ]);
 
@@ -107,9 +117,10 @@ class CustomerController extends Controller
         ]);
 
         $customer = $this->customerService->getCustomerById($id);
-        $salesPersons = $this->employeeService->getAllEmployees();
+        $salesPersons = $this->employeeService->getEmployeesByPosition('Kinh Doanh');
+        $customerSources = CustomerSource::where('is_active', 1)->get();
 
-        return view('customer::edit', compact('customer', 'salesPersons'));
+        return view('customer::edit', compact('customer', 'salesPersons', 'customerSources'));
     }
 
     /**
@@ -121,6 +132,20 @@ class CustomerController extends Controller
      */
     public function update(UpdateOrCreateCustomerRequest $request, $id)
     {
+        $request->validate([
+            'personal.email'     => 'nullable|email|unique:customers,email,' . $id,
+            'personal.phone'     => 'nullable|unique:customers,phone,' . $id,
+            'personal.identity_card' => 'nullable|unique:customers,identity_card,' . $id,
+            'personal.invoice_tax_code'  => 'nullable|unique:customers,tax_code,' . $id,
+        ]);
+
+        $request->validate([
+            'company.email'     => 'nullable|email|unique:customers,email,' . $id,
+            'company.phone'     => 'nullable|unique:customers,phone,' . $id,
+            'company.identity_card' => 'nullable|unique:customers,identity_card,' . $id,
+            'company.invoice_tax_code'  => 'nullable|unique:customers,tax_code,' . $id,
+        ]);
+
         $data = $request->all();
         $this->customerService->updateCustomer($id, $data);
         return redirect()->route('customers.index')->with('success', 'Khách hàng đã được cập nhật thành công');
@@ -134,7 +159,32 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        can(PermissionEnum::CUSTOMER_VIEW);
+        can(PermissionEnum::CUSTOMER_SHOW);
+        
+        $customer = $this->customerService->getCustomerById($id);
+        $user = Auth::user();
+        
+        // Kiểm tra quyền xem chi tiết khách hàng
+        $canView = false;
+        
+        // Có quyền xem tất cả khách hàng (CEO, Quản lý, Kế toán)
+        if (Gate::allows(PermissionEnum::CUSTOMER_SHOW_ALL)) {
+            $canView = true;
+        }
+        // Sale - chỉ xem khách hàng mà mình thêm (sales_person)
+        else if ($user && $user->employee && $customer->sales_person === $user->employee->id) {
+            $canView = true;
+        }
+        // CSKH - chỉ xem khách hàng được giao chăm sóc (person_incharge)
+        else if ($user && $user->employee && $customer->person_incharge === $user->employee->id) {
+            $canView = true;
+        }
+        
+        // Nếu không có quyền, throw exception
+        if (!$canView) {
+            abort(403, 'Bạn không có quyền xem chi tiết khách hàng này');
+        }
+        
         set_breadcrumbs([
             [
                 'title' => 'Khách hàng',
@@ -146,10 +196,10 @@ class CustomerController extends Controller
             ],
         ]);
 
-        $customer = $this->customerService->getCustomerById($id);
-        $salesPersons = $this->employeeService->getAllEmployees();
+        $salesPersons = $this->employeeService->getEmployeesByPosition('Kinh Doanh');
+        $customerSources = CustomerSource::where('is_active', 1)->get();
 
-        return view('customer::show', compact('customer', 'salesPersons'));
+        return view('customer::show', compact('customer', 'salesPersons', 'customerSources'));
     }
 
     /**

@@ -4,16 +4,24 @@ namespace Modules\Customer\Enums;
 
 enum SourceCustomerEnum: int
 {
-    const FACEBOOK = 1;
-    const WEBSITE = 2;
-    const ZALO = 3;
-    const WORK_SHOP = 4;
-    const SELF_CONTACT = 5;
-    const FRIEND = 6;
+    const SELF_FIND = 1;           // Sale tự kiếm
+    const MARKETING_CHANNEL = 2;   // Kênh Marketing
+    const AGENT_1 = 3;             // CTV 1
+    const AGENT_2 = 4;             // CTV 2
+    const FACEBOOK = 5;
+    const WEBSITE = 6;
+    const ZALO = 7;
+    const WORK_SHOP = 8;
+    const SELF_CONTACT = 9;
+    const FRIEND = 10;
 
     public static function getLabel()
     {
         return [
+            self::SELF_FIND => 'Sale tự kiếm',
+            self::MARKETING_CHANNEL => 'Kênh Marketing',
+            self::AGENT_1 => 'CTV 1',
+            self::AGENT_2 => 'CTV 2',
             self::FACEBOOK => 'Facebook',
             self::WEBSITE => 'Website',
             self::ZALO => 'Zalo',
