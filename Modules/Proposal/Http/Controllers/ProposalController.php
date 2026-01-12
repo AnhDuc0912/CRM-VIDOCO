@@ -119,6 +119,23 @@ class ProposalController extends Controller
     }
 
     /**
+     * Convert a proposal to a contract.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function convertToContract($id)
+    {
+        can(PermissionEnum::PROPOSAL_CONVERT_TO_ORDER);
+        try {
+            $this->proposalService->convertToContract($id);
+            return redirect()->route('proposals.index')->with('success', 'Báo giá đã được chuyển thành hợp đồng');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param int $id
@@ -200,5 +217,22 @@ class ProposalController extends Controller
     {
         $proposal = $this->proposalService->getProposalById($id);
         return response()->json($proposal);
+    }
+
+    /**
+     * Reject proposal and request redo.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function rejectRedo($id)
+    {
+        can(PermissionEnum::PROPOSAL_UPDATE);
+        try {
+            $this->proposalService->rejectRedo($id);
+            return redirect()->route('proposals.index')->with('success', 'Đã yêu cầu làm lại báo giá');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

@@ -4,10 +4,6 @@
 @section('title', 'Dashboard')
 @push('styles')
     <style>
-        .card {
-            margin-bottom: 0;
-        }
-
         .font-12 {
             font-size: 12px !important;
         }

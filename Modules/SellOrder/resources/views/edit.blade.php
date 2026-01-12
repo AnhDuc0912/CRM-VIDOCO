@@ -6,8 +6,6 @@
 @section('title', 'Cập nhật đơn bán hàng')
 
 @section('content')
-
-
    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
                 <div class="breadcrumb-title pe-3">Quản lý đơn hàng</div>
                 <div class="ps-3">

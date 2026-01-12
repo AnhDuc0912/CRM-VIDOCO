@@ -8,17 +8,17 @@
 
 @section('content')
 
-     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                <div class="breadcrumb-title pe-3">Quản lý hợp đồng bán hàng</div>
-                <div class="ps-3">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0 p-0">
-                            <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Chi Tiết Hợp Đồng Bán Hàng</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Quản lý hợp đồng bán hàng</div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Chi Tiết Hợp Đồng Bán Hàng</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
     <div class="card shadow-none border mb-0 radius-15">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
@@ -36,7 +36,7 @@
                                     <option value="{{ $proposal->id }}"
                                         {{ old('proposal_id', !empty($sellContract) ? $sellContract->proposal_id : '') == $proposal->id ? 'selected' : '' }}>
                                         {{ $proposal->code }} |
-                                        {{ $proposal->customer->customer_type == CustomerTypeEnum::PERSONAL ? $proposal->customer->first_name . ' ' . $proposal->customer->last_name : $proposal->customer->company_name ?? '' }}
+                                        {{ $proposal->customer ? ($proposal->customer->customer_type == CustomerTypeEnum::PERSONAL ? $proposal->customer->first_name . ' ' . $proposal->customer->last_name : $proposal->customer->company_name ?? '') : 'N/A' }}
                                     </option>
                                 @endforeach
                             </select>
@@ -125,7 +125,8 @@
                             <div class="col-2">
                                 <label class="form-label required">Số lượng</label>
                                 <input type="number" name="services[{{ $key }}][quantity]"
-                                    class="form-control service-quantity" value="{{ $service->quantity ?? '' }}" disabled>
+                                    class="form-control service-quantity" value="{{ $service->quantity ?? '' }}"
+                                    disabled>
                             </div>
                             <div class="col-3">
                                 <label class="form-label required">Đơn giá</label>

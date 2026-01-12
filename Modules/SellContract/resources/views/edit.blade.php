@@ -7,21 +7,21 @@
 
 @section('content')
 
-     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                <div class="breadcrumb-title pe-3">Quản lý hợp đồng bán hàng</div>
-                <div class="ps-3">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0 p-0">
-                            <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Chỉnh Sửa Hợp Đồng Bán Hàng</li>
-                        </ol>
-                    </nav>
-                </div>
-                <div class="ms-auto">
-                      <a class="btn btn-info" href="{{ route('customers.create') }}"><i class="bx bx-plus me-1"></i>Thêm khách
-                    hàng</a>
-                </div>
-            </div>
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Quản lý hợp đồng bán hàng</div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Chỉnh Sửa Hợp Đồng Bán Hàng</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="ms-auto">
+            <a class="btn btn-info" href="{{ route('customers.create') }}"><i class="bx bx-plus me-1"></i>Thêm khách
+                hàng</a>
+        </div>
+    </div>
     <div class="card shadow-none border mb-0 radius-15">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">

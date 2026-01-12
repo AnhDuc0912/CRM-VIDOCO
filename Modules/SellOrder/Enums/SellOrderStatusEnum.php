@@ -11,6 +11,7 @@ enum SellOrderStatusEnum
     const COMPLETED = 5;
     const PAID = 6;
     const CANCELLED = 7;
+    const REJECTED_REDO = 8;
 
     public static function getStatusName($status)
     {
@@ -22,6 +23,7 @@ enum SellOrderStatusEnum
             self::COMPLETED => 'Hoàn tất',
             self::PAID => 'Đã thanh toán',
             self::CANCELLED => 'Đã hủy',
+            self::REJECTED_REDO => 'Không duyệt, làm lại',
         };
     }
 
@@ -35,6 +37,7 @@ enum SellOrderStatusEnum
             self::COMPLETED => 'Hoàn tất',
             self::PAID => 'Đã thanh toán',
             self::CANCELLED => 'Đã hủy',
+            self::REJECTED_REDO => 'Không duyệt, làm lại',
         ];
     }
 }

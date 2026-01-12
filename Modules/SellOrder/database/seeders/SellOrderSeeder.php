@@ -17,9 +17,19 @@ class SellOrderSeeder extends Seeder
         SellOrder::create([
             'code' => TemplateCodeEnum::SELL_ORDER . '00001',
             'status' => SellOrderStatusEnum::CREATED,
-            'amount' => 1000000,
-            'expired_at' => now()->addDays(30),
-            'proposal_id' => 1,
+            'amount' => 3000000,
+            'expired_at' => now()->addDays(60),
+            'proposal_id' => 3,
+            'created_by' => 1,
+            'customer_id' => 1,
+        ]);
+
+        SellOrder::create([
+            'code' => TemplateCodeEnum::SELL_ORDER . '00002',
+            'status' => SellOrderStatusEnum::CREATED,
+            'amount' => 5000000,
+            'expired_at' => now()->addDays(90),
+            'proposal_id' => 3,
             'created_by' => 1,
             'customer_id' => 1,
         ]);

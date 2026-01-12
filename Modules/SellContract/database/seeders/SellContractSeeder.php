@@ -17,9 +17,19 @@ class SellContractSeeder extends Seeder
         SellContract::create([
             'code' => TemplateCodeEnum::SELL_CONTRACT . '00001',
             'status' => SellContractStatusEnum::NEW,
-            'amount' => 1000000,
-            'expired_at' => now()->addDays(30),
-            'proposal_id' => 1,
+            'amount' => 3000000,
+            'expired_at' => now()->addDays(60),
+            'proposal_id' => 3,
+            'created_by' => 1,
+            'customer_id' => 1,
+        ]);
+    
+        SellContract::create([
+            'code' => TemplateCodeEnum::SELL_CONTRACT . '00002',
+            'status' => SellContractStatusEnum::NEW,
+            'amount' => 5000000,
+            'expired_at' => now()->addDays(90),
+            'proposal_id' => 3,
             'created_by' => 1,
             'customer_id' => 1,
         ]);

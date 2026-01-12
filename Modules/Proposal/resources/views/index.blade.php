@@ -59,12 +59,23 @@
                                     {{ ProposalStatusEnum::getStatusName($proposal->status ?? ProposalStatusEnum::NEW) }}
                                 </td>
                                 <td>
+                                    @can(PermissionEnum::SELL_ORDER_UPDATE)
+                                        @if ($proposal->status == ProposalStatusEnum::NEW)
+                                            <a onclick="confirmAction('{{ route('proposals.reject-redo', $proposal->id) }}', 'PUT', 'Bạn có chắc chắn yêu cầu làm lại không?')"
+                                                title="Không duyệt, làm lại">
+                                                <button type="button" class="btn bg-voilet m-1">
+                                                    <i style="color: #FFF" class='bx bx-x'></i>
+                                                </button>
+                                            </a>
+                                        @endif
+                                    @endcan
+
                                     @can(PermissionEnum::PROPOSAL_CONVERT_TO_ORDER)
                                         @if ($proposal->status != ProposalStatusEnum::CONVER_TO_ORDER && $proposal->status != ProposalStatusEnum::REJECTED)
                                             <a onclick="confirmAction('{{ route('proposals.convert-to-order', $proposal->id) }}', 'PUT', 'Bạn có chắc chắn muốn chuyển thành đơn hàng không?')"
                                                 title="Chuyển thành đơn hàng">
-                                                <button type="button" class="btn btn-danger  m-1">
-                                                    <i class="bx bx bx-repeat"></i>
+                                                <button type="button" class="btn btn-success  m-1">
+                                                    <i class='bx  bx-check'></i>
                                                 </button>
                                             </a>
                                         @endif

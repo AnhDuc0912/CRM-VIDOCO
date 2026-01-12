@@ -11,6 +11,7 @@ use Modules\Order\Repositories\Contracts\CategoryRepositoryInterface;
 use Modules\Proposal\Enums\ProposalStatusEnum;
 use Modules\Proposal\Repositories\Contracts\ProposalRepositoryInterface;
 use Modules\SellContract\Enums\SellContractStatusEnum;
+use Modules\SellContract\Services\SellContractService;
 use Modules\SellOrder\Services\SellOrderService;
 
 class ProposalService
@@ -18,12 +19,19 @@ class ProposalService
     protected $proposalRepository;
     protected $categoryRepository;
     protected $sellOrderService;
+    protected $sellContractService;
 
-    public function __construct(ProposalRepositoryInterface $proposalRepository, CategoryRepositoryInterface $categoryRepository, SellOrderService $sellOrderService)
+    public function __construct(
+        ProposalRepositoryInterface $proposalRepository, 
+        CategoryRepositoryInterface $categoryRepository, 
+        SellOrderService $sellOrderService,
+        SellContractService $sellContractService
+    )
     {
         $this->proposalRepository = $proposalRepository;
         $this->categoryRepository = $categoryRepository;
         $this->sellOrderService = $sellOrderService;
+        $this->sellContractService = $sellContractService;
     }
 
     /**
@@ -223,6 +231,40 @@ class ProposalService
     }
 
     /**
+     * Convert a proposal to a contract.
+     *
+     * @param int $id
+     * @return bool
+     * @throws \Exception
+     */
+    public function convertToContract($id)
+    {
+        DB::beginTransaction();
+        try {
+            $proposal = $this->proposalRepository->find($id);
+            if (!$proposal) {
+                throw new \Exception('Không tìm thấy báo giá');
+            }
+
+            $update = $proposal->update([
+                'status' => ProposalStatusEnum::CONVERT_TO_CONTRACT,
+            ]);
+
+            if (!$update) {
+                throw new \Exception('Không thể chuyển thành hợp đồng');
+            }
+
+            $this->handleConvertToContract($proposal);
+
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
      * Get a proposal by id.
      *
      * @param int $id
@@ -329,5 +371,72 @@ class ProposalService
 
         $isConvertToOrder = true;
         $this->sellOrderService->createSellOrder($data, $isConvertToOrder);
+    }
+
+    /**
+     * Handle converting proposal to contract.
+     *
+     * @param Proposal $proposal
+     * @return void
+     * @throws \Exception
+     */
+    public function handleConvertToContract($proposal)
+    {
+        $data = [
+            'status' => SellContractStatusEnum::NEW,
+            'note' => $proposal->note ?? '',
+            'expired_at' => $proposal->expired_at ?? now()->addDays(30),
+            'proposal_id' => $proposal->id,
+            'customer_id' => $proposal->customer_id ?? null,
+            'services' => $proposal->services?->map(function ($service) {
+                return [
+                    'category_id' => $service->category_id,
+                    'service_id' => $service->service_id,
+                    'product_id' => $service->product_id,
+                    'price' => $service->price,
+                    'quantity' => $service->quantity,
+                    'total' => $service->total,
+                ];
+            })->toArray() ?? [],
+            'files' => $proposal->files?->toArray() ?? [],
+        ];
+
+        $this->sellContractService->createSellContract($data);
+    }
+
+    /**
+     * Mark proposal as rejected and request redo.
+     *
+     * @param int $id
+     * @return bool
+     * @throws \Exception
+     */
+    public function rejectRedo($id)
+    {
+        DB::beginTransaction();
+        try {
+            $proposal = $this->proposalRepository->find($id);
+            if (!$proposal) {
+                throw new \Exception('Không tìm thấy báo giá');
+            }
+
+            if ($proposal->status == ProposalStatusEnum::CONVER_TO_ORDER) {
+                throw new \Exception('Báo giá đã chuyển thành đơn hàng, không thể yêu cầu làm lại');
+            }
+
+            $updated = $proposal->update([
+                'status' => ProposalStatusEnum::REJECTED_REDO,
+            ]);
+
+            if (!$updated) {
+                throw new \Exception('Không thể cập nhật trạng thái làm lại');
+            }
+
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

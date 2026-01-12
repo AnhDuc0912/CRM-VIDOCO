@@ -38,7 +38,7 @@
                                     <option value="{{ $proposal->id }}"
                                         {{ old('proposal_id', !empty($sellOrder) ? $sellOrder->proposal_id : '') == $proposal->id ? 'selected' : '' }}>
                                         {{ $proposal->code }} |
-                                        {{ $proposal->customer->customer_type == CustomerTypeEnum::PERSONAL ? $proposal->customer->first_name . ' ' . $proposal->customer->last_name : $proposal->customer->company_name ?? '' }}
+                                        {{ $proposal->customer ? ($proposal->customer->customer_type == CustomerTypeEnum::PERSONAL ? $proposal->customer->first_name . ' ' . $proposal->customer->last_name : $proposal->customer->company_name ?? '') : 'N/A' }}
                                     </option>
                                 @endforeach
                             </select>

@@ -4,9 +4,7 @@
 @section('title', 'Dashboard')
 @push('styles')
 <style>
-    .card {
-        margin-bottom: 0;
-    }
+
 </style>
 @endpush
 @section('content')

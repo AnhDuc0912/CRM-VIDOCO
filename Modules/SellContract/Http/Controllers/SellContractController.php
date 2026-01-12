@@ -92,6 +92,7 @@ class SellContractController extends Controller
         if (!$sellContract) {
             return redirect()->route('sell-contracts.index')->with('error', 'Hợp đồng bán hàng không tồn tại');
         }
+        
         $employees = $this->employeeService->getAllEmployees();
         $customers = $this->customerService->getAllCustomers();
         $proposals = $this->proposalService->getProposals();
