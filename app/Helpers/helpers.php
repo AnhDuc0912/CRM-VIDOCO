@@ -55,6 +55,38 @@ if (!function_exists('format_money')) {
     }
 }
 
+if (!function_exists('format_number_short')) {
+    /**
+     * Format number to short form with Vietnamese units
+     * @param float|int $number
+     * @param int $decimals Number of decimal places
+     * @return string
+     */
+    function format_number_short($number, $decimals = 1)
+    {
+        if ($number < 1000) {
+            return number_format($number, 0, ',', '.');
+        }
+
+        $units = [
+            ['value' => 1000000000, 'unit' => 'tỷ'],
+            ['value' => 1000000, 'unit' => 'triệu'],
+            ['value' => 1000, 'unit' => 'nghìn'],
+        ];
+
+        foreach ($units as $unitData) {
+            if ($number >= $unitData['value']) {
+                $value = $number / $unitData['value'];
+                // Remove trailing zeros
+                $formatted = rtrim(rtrim(number_format($value, $decimals, ',', '.'), '0'), ',');
+                return $formatted . ' ' . $unitData['unit'];
+            }
+        }
+
+        return number_format($number, 0, ',', '.');
+    }
+}
+
 if (!function_exists('generate_code')) {
     function generate_code($prefix, $table)
     {

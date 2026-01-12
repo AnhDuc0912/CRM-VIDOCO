@@ -136,6 +136,7 @@ class CustomerService
     public function getBusinessStats($user, array $filters = []): array
     {
         $customers = $this->getCustomersForUser($user, null, $filters);
+        $today = now();
 
         $totalCustomers = $customers->count();
         $personalCount = $customers->where('customer_type', CustomerTypeEnum::PERSONAL)->count();
@@ -144,6 +145,27 @@ class CustomerService
         $usingCount = $customers->where('segment_tag', 'using')->count();
         $leadCount = $customers->where('segment_tag', 'lead')->count();
         $stoppedCount = $customers->where('segment_tag', 'stopped')->count();
+
+        // Số báo giá (proposals)
+        $proposalCount = $customers->flatMap->proposals->count();
+
+        // Khách hàng đã mua (có đơn hàng)
+        $customerCount = $usingCount + $stoppedCount;
+
+        // Tổng dịch vụ đang sử dụng
+        $serviceCount = $customers
+            ->flatMap->orders
+            ->flatMap->orderServices
+            ->filter(function ($service) use ($today) {
+                return is_null($service->end_date) || $service->end_date >= $today;
+            })
+            ->count();
+
+        // Tổng doanh thu từ đơn hàng
+        $totalRevenue = $customers
+            ->flatMap->orders
+            ->flatMap->orderServices
+            ->sum('total_price');
 
         $monthlyNew = $customers
             ->filter(fn($c) => $c->created_at)
@@ -169,11 +191,6 @@ class CustomerService
             ->map->count()
             ->sortKeys()
             ->toArray();
-
-        $totalRevenue = $customers
-            ->flatMap->orders
-            ->flatMap->orderServices
-            ->sum('total_price');
 
         $customerRevenue = $customers->mapWithKeys(function ($c) {
             $revenue = $c->orders
@@ -204,6 +221,9 @@ class CustomerService
             'using_count' => $usingCount,
             'lead_count' => $leadCount,
             'stopped_count' => $stoppedCount,
+            'proposal_count' => $proposalCount,
+            'customer_count' => $customerCount,
+            'service_count' => $serviceCount,
             'monthly_new' => $monthlyNew,
             'quarterly_new' => $quarterlyNew,
             'yearly_new' => $yearlyNew,

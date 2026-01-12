@@ -20,8 +20,4 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-    // Redirect root to employees
-    Route::get('/', [AuthController::class, 'dashboard'])->name('dashboard');
-    Route::get('/dashboard-business', [AuthController::class, 'dashboard_business'])->name('dashboard.business');
 });

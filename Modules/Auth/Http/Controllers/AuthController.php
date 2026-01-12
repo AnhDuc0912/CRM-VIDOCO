@@ -21,13 +21,6 @@ class AuthController extends Controller
     /**
      * Show login form
      */
-    protected $employeeService;
-
-    public function __construct(
-        EmployeeService $employeeService,
-    ) {
-        $this->employeeService = $employeeService;
-    }
 
     public function showLoginForm()
     {
@@ -179,35 +172,5 @@ class AuthController extends Controller
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
         return redirect('/login')->with('success', __('auth.reset_password.success'));
-    }
-
-    /**
-     * Dashboard
-     */
-    public function dashboard()
-    {
-        can(PermissionEnum::DASHBOARD_VIEW);
-        $filters = [
-            'sales_person_id' => request('sales_person_id'),
-            'person_incharge_id' => request('person_incharge_id'),
-        ];
-
-        $stats = app(\Modules\Customer\Services\CustomerService::class)->getBusinessStats(Auth::user(), $filters);
-        $employees = $this->employeeService->getEmployeesByPosition("Kinh Doanh");
-        return view('core::dashboard', compact('stats', 'employees', 'filters'));
-    }
-
-    public function dashboard_business()
-    {
-        can(PermissionEnum::DASHBOARD_VIEW);
-        $filters = [
-            'sales_person_id' => request('sales_person_id'),
-            'person_incharge_id' => request('person_incharge_id'),
-        ];
-
-        $stats = app(\Modules\Customer\Services\CustomerService::class)->getBusinessStats(Auth::user(), $filters);
-        $employees = $this->employeeService->getEmployeesByPosition("Kinh Doanh");
-
-        return view('core::dashboard-business', compact('stats', 'employees', 'filters'));
     }
 }

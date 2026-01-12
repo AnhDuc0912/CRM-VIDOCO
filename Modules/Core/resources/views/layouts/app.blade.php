@@ -77,9 +77,12 @@
         <div class="page-wrapper">
             <!--page-content-wrapper-->
             <div class="page-content-wrapper">
+                <div class="page-content">
                     <!--breadcrumb-->
                            @yield('content')
                     <!--end breadcrumb-->
+
+                </div>
              
             </div>
             <!--end page-content-wrapper-->
