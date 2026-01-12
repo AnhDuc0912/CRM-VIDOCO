@@ -102,6 +102,46 @@
                 }
             }, 200);
 
+            // Tự động chọn proposal nếu có proposalId từ URL
+            @if(!empty($proposalId))
+                setTimeout(function() {
+                    $('#proposal_select').val({{ $proposalId }}).trigger('change');
+                }, 300);
+            @endif
+
+            // Event handler cho proposal_select change
+            $('#proposal_select').on('change', function() {
+                var proposalId = $(this).val();
+                if (proposalId != '') {
+                    $.ajax({
+                        url: `{{ route('proposals.ajax.show', ['id' => ':id']) }}`
+                            .replace(':id', proposalId),
+                        method: 'GET',
+                        beforeSend: function() {
+                            $('#submit-btn').prop('disabled', true);
+                        },
+                        success: function(response) {
+                            $('#customer_select').val(response.customer_id).trigger('change');
+                            $('#expired_at').val(response.expired_at);
+
+                            if (response.services && response.services.length > 0) {
+                                loadServicesFromResponse(response.services);
+                            } else {
+                                resetServices();
+                            }
+
+                            $('#submit-btn').prop('disabled', false);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error loading proposal:', error);
+                            $('#submit-btn').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    resetServices();
+                }
+            });
+
 
             // Function để load services từ response
             function loadServicesFromResponse(services) {

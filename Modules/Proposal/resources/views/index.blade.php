@@ -71,9 +71,9 @@
                                     @endcan
 
                                     @can(PermissionEnum::PROPOSAL_CONVERT_TO_ORDER)
-                                        @if ($proposal->status != ProposalStatusEnum::CONVER_TO_ORDER && $proposal->status != ProposalStatusEnum::REJECTED)
-                                            <a onclick="confirmAction('{{ route('proposals.convert-to-order', $proposal->id) }}', 'PUT', 'Bạn có chắc chắn muốn chuyển thành đơn hàng không?')"
-                                                title="Chuyển thành đơn hàng">
+                                        @if ($proposal->status != ProposalStatusEnum::CONVER_TO_ORDER && $proposal->status != ProposalStatusEnum::REJECTED && $proposal->status != ProposalStatusEnum::CONVERT_TO_CONTRACT)
+                                            <a onclick="approveProposal({{ $proposal->id }})"
+                                                title="Duyệt báo giá">
                                                 <button type="button" class="btn btn-success  m-1">
                                                     <i class='bx  bx-check'></i>
                                                 </button>
@@ -121,5 +121,29 @@
             table.buttons().container().appendTo(
                 '#example2_wrapper .col-md-6:eq(0)');
         });
+
+        function approveProposal(proposalId) {
+            Swal.fire({
+                title: 'Duyệt báo giá',
+                text: 'Có tạo hợp đồng không?',
+                icon: 'question',
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: 'Có, tạo hợp đồng',
+                denyButtonText: 'Không, tạo đơn hàng',
+                cancelButtonText: 'Huỷ',
+                confirmButtonColor: '#3085d6',
+                denyButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Tạo hợp đồng
+                    window.location.href = '{{ route("sell-contracts.create") }}?proposal_id=' + proposalId;
+                } else if (result.isDenied) {
+                    // Tạo đơn hàng
+                    window.location.href = '{{ route("sell-orders.create") }}?proposal_id=' + proposalId;
+                }
+            });
+        }
     </script>
 @endpush

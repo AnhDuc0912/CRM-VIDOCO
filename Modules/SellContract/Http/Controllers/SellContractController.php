@@ -56,8 +56,9 @@ class SellContractController extends Controller
         $employees = $this->employeeService->getAllEmployees();
         $proposals = $this->proposalService->getProposals();
         $categories = $this->proposalService->getCategoriesForCreate();
+        $proposalId = request()->get('proposal_id');
 
-        return view('sellcontract::create', compact('customers', 'employees', 'proposals', 'categories'));
+        return view('sellcontract::create', compact('customers', 'employees', 'proposals', 'categories', 'proposalId'));
     }
 
     /**
@@ -71,6 +72,11 @@ class SellContractController extends Controller
     {
         $data = $request->validated();
         $this->sellContractService->createSellContract($data);
+
+        // Cập nhật trạng thái proposal nếu có proposal_id
+        if (!empty($data['proposal_id'])) {
+            $this->proposalService->convertToContract($data['proposal_id']);
+        }
 
         return redirect()->route('sell-contracts.index')->with('success', 'Hợp đồng bán hàng đã được tạo thành công');
     }

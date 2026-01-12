@@ -104,6 +104,13 @@
                 }
             }, 200);
 
+            // Tự động chọn proposal nếu có proposalId từ URL
+            @if(!empty($proposalId))
+                setTimeout(function() {
+                    $('#proposal_select').val({{ $proposalId }}).trigger('change');
+                }, 300);
+            @endif
+
             // Event handler cho proposal_select change
             $('#proposal_select').on('change', function() {
                 var proposalId = $(this).val();
