@@ -100,6 +100,10 @@ class SellOrderController extends Controller
             ],
         ]);
         $sellOrder = $this->sellOrderService->getSellOrderById($id);
+            if (!empty($data['proposal_id'])) {
+                $data['source_type'] = 'proposal';
+                $data['source_id'] = $data['proposal_id'];
+            }
         if (!$sellOrder) {
             return redirect()->route('sell-orders.index')->with('error', 'Đơn hàng không tồn tại');
         }

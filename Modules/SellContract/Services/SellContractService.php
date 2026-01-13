@@ -278,6 +278,8 @@ class SellContractService
             'note' => $sellContract->note ?? '',
             'expired_at' => $sellContract->expired_at ?? now()->addDays(30),
             'proposal_id' => $sellContract->proposal_id,
+            'source_type' => 'contract',
+            'source_id' => $sellContract->id,
             'customer_id' => $sellContract->customer_id ?? null,
             'services' => $sellContract->services?->map(function ($service) {
                 return [

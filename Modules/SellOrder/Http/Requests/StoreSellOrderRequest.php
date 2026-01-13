@@ -15,6 +15,8 @@ class StoreSellOrderRequest extends FormRequest
         return [
             'customer_id' => 'required|exists:customers,id',
             'proposal_id' => 'nullable|exists:proposals,id',
+            'source_type' => 'nullable|string|max:50',
+            'source_id' => 'nullable|integer',
             'expired_at' => 'required|date',
             'status' => 'required|in:' . implode(',', array_keys(SellOrderStatusEnum::getStatusOptions())),
             'note' => 'nullable|string|max:500',

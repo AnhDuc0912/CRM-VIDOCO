@@ -355,6 +355,8 @@ class ProposalService
             'note' => $proposal->note ?? '',
             'expired_at' => $proposal->expired_at ?? now()->addDays(30),
             'proposal_id' => $proposal->id,
+            'source_type' => 'proposal',
+            'source_id' => $proposal->id,
             'customer_id' => $proposal->customer_id ?? null,
             'services' => $proposal->services?->map(function ($service) {
                 return [
