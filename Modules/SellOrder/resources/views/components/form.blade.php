@@ -19,6 +19,25 @@
                 </select>
             </div>
             <div class="col-6">
+                @php
+                    $sourceLabel = 'Tạo trực tiếp';
+                    if (!empty($sellOrder)) {
+                        if ($sellOrder->source_type === 'proposal' && $sellOrder->proposal) {
+                            $sourceLabel = 'Báo giá: ' . ($sellOrder->proposal->code ?? '#');
+                        } elseif ($sellOrder->source_type === 'contract') {
+                            $sourceLabel = 'Hợp đồng ID: ' . ($sellOrder->source_id ?? '');
+                        }
+                    } elseif (!empty($proposalId)) {
+                        $selectedProposal = $proposals->firstWhere('id', $proposalId);
+                        if ($selectedProposal) {
+                            $sourceLabel = 'Báo giá: ' . ($selectedProposal->code ?? '#');
+                        }
+                    }
+                @endphp
+                <label class="form-label">Nguồn đơn hàng</label>
+                <input type="text" class="form-control" value="{{ $sourceLabel }}" readonly>
+            </div>
+            <div class="col-6">
                 <label class="form-label required">Khách Hàng</label>
                 <select class="single-select1 form-control" name="customer_id" id="customer_select">
                     <option value="">-- Chọn Khách Hàng--</option>
