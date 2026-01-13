@@ -32,84 +32,76 @@
                     <div class="row g-3">
                         <div class="col-6">
                             <label class="form-label">Mã đơn hàng</label>
-                            <select class="single-select2 form-control" name="proposal_id" id="proposal_select" disabled>
-                                <option value="">-- Chọn Mã Báo Giá --</option>
-                                @foreach ($proposals as $proposal)
-                                    <option value="{{ $proposal->id }}"
-                                        {{ old('proposal_id', !empty($sellOrder) ? $sellOrder->proposal_id : '') == $proposal->id ? 'selected' : '' }}>
-                                        {{ $proposal->code }} |
-                                        {{ $proposal->customer ? ($proposal->customer->customer_type == CustomerTypeEnum::PERSONAL ? $proposal->customer->first_name . ' ' . $proposal->customer->last_name : $proposal->customer->company_name ?? '') : 'N/A' }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control" value="{{ $sellOrder->code ?? '' }}" readonly>
+                        </div>
+                        <div class="col-6">
+                            @php
+                                $sourceLabel = 'Tạo trực tiếp';
+                                if (!empty($sellOrder)) {
+                                    if (!empty($sellOrder->sell_contract_id)) {
+                                        $sourceLabel = 'Hợp đồng ID: ' . ($sellOrder->sell_contract_id ?? '');
+                                    } elseif (!empty($sellOrder->proposal_id) && $sellOrder->proposal) {
+                                        $sourceLabel = 'Báo giá: ' . ($sellOrder->proposal->code ?? '#');
+                                    }
+                                }
+                            @endphp
+                            <label class="form-label">Nguồn đơn hàng</label>
+                            <input type="text" class="form-control" value="{{ $sourceLabel }}" readonly>
                         </div>
                         <div class="col-6">
                             <label class="form-label required">Khách Hàng</label>
-                            <select class="single-select1 form-control" name="customer_id" id="customer_select" disabled>
-                                <option value="">-- Chọn Khách Hàng--</option>
-                                @foreach ($customers as $customer)
-                                    <option value="{{ $customer->id }}">
-                                        {{ $customer->customer_type == CustomerTypeEnum::PERSONAL ? $customer->first_name . ' ' . $customer->last_name : $customer->company_name ?? '' }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control" 
+                                value="{{ $sellOrder->customer ? ($sellOrder->customer->customer_type == CustomerTypeEnum::PERSONAL ? $sellOrder->customer->first_name . ' ' . $sellOrder->customer->last_name : $sellOrder->customer->company_name ?? '') : '' }}" 
+                                readonly>
                         </div>
                         <div class="col-6">
                             <label class="form-label">Người Phụ Trách</label>
-                            <input type="text" name="employee_id" id="employee_id" value="" class="form-control"
-                                disabled disabled>
+                            <input type="text" name="employee_id" id="employee_id" 
+                                value="{{ $sellOrder->customer?->personInCharge?->full_name ?? '' }}" 
+                                class="form-control" readonly>
                         </div>
                         <div class="col-6">
                             <label class="form-label required">Hạn Hợp Đồng</label>
                             <input type="date" name="expired_at" class="form-control" id="expired_at"
-                                value="{{ old('expired_at', !empty($sellOrder) ? $sellOrder->expired_at : date('Y-m-d')) }}"
-                                disabled>
+                                value="{{ $sellOrder->expired_at ?? '' }}" readonly>
                         </div>
                         <div class="col-6">
                             <label class="form-label required">Trạng thái</label>
-                            <select class="single-select form-control" name="status" id="status_select" disabled>
-                                @foreach (SellOrderStatusEnum::getStatusOptions() as $status => $label)
-                                    <option value="{{ $status }}"
-                                        {{ old('status', SellOrderStatusEnum::CREATED) == $status ? 'selected' : '' }}
-                                        disabled>
-                                        {{ $label }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control" 
+                                value="{{ SellOrderStatusEnum::getStatusName($sellOrder->status ?? SellOrderStatusEnum::CREATED) }}" 
+                                readonly>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-lg-6">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label for="validationServer02" class="form-label">Email
-                                chính</label>
-                            <input type="email" name="email" class="form-control" value="" id="email"
-                                disabled>
+                            <label for="validationServer02" class="form-label">Email chính</label>
+                            <input type="email" name="email" class="form-control" 
+                                value="{{ $sellOrder->customer?->email ?? '' }}" id="email" readonly>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Chủ thể</label>
-                            <input readonly type="text" name="name" id="customer_name" value=""
-                                class="form-control" disabled>
+                            <input readonly type="text" name="name" id="customer_name" 
+                                value="{{ $sellOrder->customer ? ($sellOrder->customer->customer_type == CustomerTypeEnum::PERSONAL ? $sellOrder->customer->first_name . ' ' . $sellOrder->customer->last_name : $sellOrder->customer->company_name) : '' }}"
+                                class="form-control" readonly>
                         </div>
                         <div class="col-12">
-                            <label for="validationServer02" class="form-label">Điện
-                                thoại</label>
-                            <input readonly type="text" name="phone" class="form-control" id="phone" value=""
-                                disabled>
+                            <label for="validationServer02" class="form-label">Điện thoại</label>
+                            <input readonly type="text" name="phone" class="form-control" id="phone" 
+                                value="{{ $sellOrder->customer?->phone ?? '' }}" readonly>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Địa chỉ</label>
-                            <input readonly type="text" name="address" id="address" value="" class="form-control"
-                                disabled>
+                            <input readonly type="text" name="address" id="address" 
+                                value="{{ $sellOrder->customer?->address ?? '' }}" class="form-control" readonly>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-12">
                     <label class="form-label">Ghi chú</label>
-                    <textarea class="form-control" disabled name="note" id="inputAddress" placeholder="Ghi chú..." rows="3"
-                        disabled>{{ old('note', !empty($sellOrder) ? $sellOrder->note : '') }}</textarea>
+                    <textarea class="form-control" name="note" id="inputAddress" placeholder="Ghi chú..." rows="3" readonly>{{ $sellOrder->note ?? '' }}</textarea>
                 </div>
             </div>
 
