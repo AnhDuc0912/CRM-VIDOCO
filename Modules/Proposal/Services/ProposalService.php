@@ -357,6 +357,7 @@ class ProposalService
             'proposal_id' => $proposal->id,
             'source_type' => 'proposal',
             'source_id' => $proposal->id,
+            'sell_contract_id' => null,
             'customer_id' => $proposal->customer_id ?? null,
             'services' => $proposal->services?->map(function ($service) {
                 return [

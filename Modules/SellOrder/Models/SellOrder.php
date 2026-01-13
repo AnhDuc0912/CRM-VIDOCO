@@ -23,6 +23,7 @@ class SellOrder extends Model
         'note',
         'expired_at',
         'proposal_id',
+        'sell_contract_id',
         'source_type',
         'source_id',
         'created_by',

@@ -15,6 +15,7 @@ class StoreSellOrderRequest extends FormRequest
         return [
             'customer_id' => 'required|exists:customers,id',
             'proposal_id' => 'nullable|exists:proposals,id',
+            'sell_contract_id' => 'nullable|exists:sell_contracts,id',
             'source_type' => 'nullable|string|max:50',
             'source_id' => 'nullable|integer',
             'expired_at' => 'required|date',

@@ -22,10 +22,10 @@
                 @php
                     $sourceLabel = 'Tạo trực tiếp';
                     if (!empty($sellOrder)) {
-                        if ($sellOrder->source_type === 'proposal' && $sellOrder->proposal) {
+                        if (!empty($sellOrder->sell_contract_id)) {
+                            $sourceLabel = 'Hợp đồng ID: ' . ($sellOrder->sell_contract_id ?? '');
+                        } elseif (!empty($sellOrder->proposal_id) && $sellOrder->proposal) {
                             $sourceLabel = 'Báo giá: ' . ($sellOrder->proposal->code ?? '#');
-                        } elseif ($sellOrder->source_type === 'contract') {
-                            $sourceLabel = 'Hợp đồng ID: ' . ($sellOrder->source_id ?? '');
                         }
                     } elseif (!empty($proposalId)) {
                         $selectedProposal = $proposals->firstWhere('id', $proposalId);
