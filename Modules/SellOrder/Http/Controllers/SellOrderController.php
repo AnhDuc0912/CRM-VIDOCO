@@ -78,7 +78,6 @@ class SellOrderController extends Controller
     {
         $data = $request->validated();
         $this->sellOrderService->createSellOrder($data);
-
         // Cập nhật trạng thái proposal nếu có proposal_id
         if (!empty($data['proposal_id'])) {
             $this->proposalService->convertToOrder($data['proposal_id']);

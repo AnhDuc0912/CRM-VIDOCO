@@ -59,7 +59,7 @@
                                     {{ ProposalStatusEnum::getStatusName($proposal->status ?? ProposalStatusEnum::NEW) }}
                                 </td>
                                 <td>
-                                    @can(PermissionEnum::SELL_ORDER_UPDATE)
+                                    @can(PermissionEnum::PROPOSAL_CONVERT_TO_ORDER)
                                         @if ($proposal->status == ProposalStatusEnum::NEW)
                                             <a onclick="confirmAction('{{ route('proposals.reject-redo', $proposal->id) }}', 'PUT', 'Bạn có chắc chắn yêu cầu làm lại không?')"
                                                 title="Không duyệt, làm lại">

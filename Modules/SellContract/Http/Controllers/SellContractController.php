@@ -70,10 +70,10 @@ class SellContractController extends Controller
      */
     public function store(StoreSellContractRequest $request)
     {
-        $data = $request->validated();
+        $data = $request;
+        
         $this->sellContractService->createSellContract($data);
 
-        // Cập nhật trạng thái proposal nếu có proposal_id
         if (!empty($data['proposal_id'])) {
             $this->proposalService->convertToContract($data['proposal_id']);
         }

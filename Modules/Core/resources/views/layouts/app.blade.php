@@ -109,6 +109,7 @@
     <script src="{{ asset('assets/js/app.js') }}"></script>
 
     @include('core::partials.toast')
+    @include('core::partials.confirm-modal')
     @stack('scripts')
 </body>
 

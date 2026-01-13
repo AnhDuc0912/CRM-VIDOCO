@@ -75,7 +75,7 @@
                                         @if (
                                             $sellContract->status != SellContractStatusEnum::CONVER_TO_ORDER &&
                                                 $sellContract->status != SellContractStatusEnum::REJECTED)
-                                            <a onclick="confirmAction('{{ route('sell-contracts.convert-to-order', $sellContract->id) }}', 'PUT', 'Bạn có chắc chắn muốn chuyển thành đơn hàng không?')"
+                                            <a onclick="confirmAction('{{ route('sell-contracts.convert-to-order', $sellContract->id) }}', 'PUT', 'Bạn có chắc chắn muốn chuyển hợp đồng này thành đơn hàng không?')"
                                                 title="Chuyển thành đơn hàng">
                                                 <button type="button" class="btn btn-danger  m-1">
                                                     <i class="bx bx bx-repeat"></i>

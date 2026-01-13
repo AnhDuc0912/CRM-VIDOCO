@@ -30,18 +30,33 @@ class SellOrderService
 
     public function createSellOrder($data, $isConvertToOrder = false)
     {
-        $data['code'] = generate_code(TemplateCodeEnum::SELL_ORDER, 'sell_orders');
-        $data['created_by'] = Auth::user()->id;
+        // Extract services and files from data
+        $services = $data['services'] ?? [];
+        $files = $data['files'] ?? [];
+        // Filter only the fields needed for creating sell order
+        $orderData = [
+            'code' => generate_code(TemplateCodeEnum::SELL_ORDER, 'sell_orders'),
+            'created_by' => Auth::user()->id,
+            'proposal_id' => $data['proposal_id'] ?? null,
+            'customer_id' => $data['customer_id'] ?? null,
+            'status' => $data['status'] ?? 1,
+            'expired_at' => $data['expired_at'] ?? now()->addDays(30),
+            'note' => $data['note'] ?? null,
+            'amount' => $this->calculateAmount($services),
+        ];
+
+
+
         DB::beginTransaction();
         try {
-            $data['amount'] = $this->calculateAmount($data['services'] ?? []);
-            $sellOrder = $this->sellOrderRepository->create($data);
-            if (isset($data['files'])) {
-                $this->updateFiles($sellOrder, $data['files'], $isConvertToOrder);
+            $sellOrder = $this->sellOrderRepository->create($orderData);
+
+            if (!empty($files)) {
+                $this->updateFiles($sellOrder, $files, $isConvertToOrder);
             }
 
-            if (isset($data['services'])) {
-                foreach ($data['services'] as $service) {
+            if (!empty($services)) {
+                foreach ($services as $service) {
                     $sellOrder->services()->create([
                         'category_id' => $service['category_id'],
                         'service_id' => $service['service_id'],
@@ -52,9 +67,6 @@ class SellOrderService
                         'sell_order_id' => $sellOrder->id,
                     ]);
                 }
-            }
-
-            if ($isConvertToOrder) {
             }
 
             DB::commit();

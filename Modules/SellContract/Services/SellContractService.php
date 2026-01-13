@@ -34,18 +34,34 @@ class SellContractService
 
     public function createSellContract($data)
     {
-        $data['code'] = generate_code(TemplateCodeEnum::SELL_CONTRACT, 'sell_contracts');
-        $data['created_by'] = Auth::user()->id;
+        // Extract services and files from data
+        $services = $data['services'] ?? [];
+        dd($services);
+        $files = $data['files'] ?? [];
+
+        // Filter only the fields needed for creating sell contract
+        $contractData = [
+            'code' => generate_code(TemplateCodeEnum::SELL_CONTRACT, 'sell_contracts'),
+            'created_by' => Auth::user()->id,
+            'proposal_id' => $data['proposal_id'] ?? null,
+            'customer_id' => $data['customer_id'] ?? null,
+            'status' => $data['status'] ?? 1,
+            'expired_at' => $data['expired_at'] ?? now()->addDays(30),
+            'note' => $data['note'] ?? null,
+            'amount' => $this->calculateAmount($services),
+        ];
+
+
         DB::beginTransaction();
         try {
-            $data['amount'] = $this->calculateAmount($data['services'] ?? []);
-            $sellContract = $this->sellContractRepository->create($data);
-            if (isset($data['files'])) {
-                $this->updateFiles($sellContract, $data['files']);
+            $sellContract = $this->sellContractRepository->create($contractData);
+            
+            if (!empty($files)) {
+                $this->updateFiles($sellContract, $files);
             }
 
-            if (isset($data['services'])) {
-                foreach ($data['services'] as $service) {
+            if (!empty($services)) {
+                foreach ($services as $service) {
                     $sellContract->services()->create([
                         'category_id' => $service['category_id'],
                         'service_id' => $service['service_id'],
