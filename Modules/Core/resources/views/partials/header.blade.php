@@ -130,31 +130,37 @@
                         <div class="dropdown-divider"></div>
 
                         @php
-                            $todayRecord = \Modules\TimeKeeping\Models\TimeKeeping::where(
-                                'employee_id',
-                                auth()->user()->employee->id,
-                            )
-                                ->whereDate('check_in', today())
-                                ->first();
+                            $todayRecord = null;
+                            $checkedIn = false;
+                            $checkedOut = false;
+                            
+                            if (auth()->user()->employee) {
+                                $todayRecord = \Modules\TimeKeeping\Models\TimeKeeping::where(
+                                    'employee_id',
+                                    auth()->user()->employee->id,
+                                )
+                                    ->whereDate('check_in', today())
+                                    ->first();
 
-                            $checkedIn = $todayRecord ? true : false;
-                            $checkedOut = $todayRecord && $todayRecord->check_out ? true : false;
+                                $checkedIn = $todayRecord ? true : false;
+                                $checkedOut = $todayRecord && $todayRecord->check_out ? true : false;
+                            }
                         @endphp
-                        @if (!$checkedIn)
+                        @if (auth()->user()->employee && !$checkedIn)
                             <form method="POST" action="{{ route('checkin') }}">
                                 @csrf
                                 <button class="dropdown-item text-success">
                                     <i class="bx bx-log-in"></i> Check-in
                                 </button>
                             </form>
-                        @elseif ($checkedIn && !$checkedOut)
+                        @elseif (auth()->user()->employee && $checkedIn && !$checkedOut)
                             <form method="POST" action="{{ route('checkout') }}">
                                 @csrf
                                 <button class="dropdown-item text-danger">
                                     <i class="bx bx-log-out"></i> Check-out
                                 </button>
                             </form>
-                        @else
+                        @elseif (auth()->user()->employee && $checkedOut)
                             <span class="dropdown-item text-muted"><i class="bx bx-check-circle"></i> Đã hoàn tất hôm
                                 nay</span>
                         @endif

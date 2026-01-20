@@ -1,5 +1,5 @@
 @use('Modules\Category\Enums\CategoryStatusEnum')
-@props(['action', 'method', 'category' => null])
+@props(['action', 'method', 'category' => null, 'serviceFields' => []])
 
 <form action="{{ $action }}" method="post" enctype="multipart/form-data"
     id="category-create-form">
@@ -16,17 +16,27 @@
                             <label class="form-label required">Tên
                                 danh mục</label>
                             <input name="name" type="text"
-                                value="{{ $category ? $category->name : old('name') }}"
+                                value="{{ old('name', $category->name ?? '') }}"
                                 class="form-control">
                         </div>
+
                         <div class="col-6">
                             <label class="form-label required">Trạng
                                 Thái</label>
-                            <select name="status" class="form-select">
+                            <select name="status" class="form-select mb-3">
                                 @foreach (CategoryStatusEnum::getValues() as $status)
-                                    <option value="{{ $status }}"
-                                        {{ $category && $category->status == $status ? 'selected' : '' }}>
+                                    <option value="{{ $status }}" {{ old('status', $category->status ?? '') == $status ? 'selected' : '' }}>
                                         {{ CategoryStatusEnum::getLabel($status) }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            <label class="form-label">Lĩnh vực</label>
+                            <select name="service_field_id" class="form-select">
+                                <option value="">-- Chọn Lĩnh vực --</option>
+                                @foreach($serviceFields as $field)
+                                    <option value="{{ $field->id }}" {{ old('service_field_id', $category->service_field_id ?? '') == $field->id ? 'selected' : '' }}>
+                                        {{ $field->name }}
                                     </option>
                                 @endforeach
                             </select>

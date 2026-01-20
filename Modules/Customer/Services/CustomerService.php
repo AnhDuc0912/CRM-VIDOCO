@@ -15,6 +15,8 @@ use Modules\Customer\Repositories\Contracts\CustomerBankAccountRepositoryInterfa
 use Modules\Customer\Repositories\Contracts\CustomerBehaviorRepositoryInterface;
 use Modules\Customer\Enums\CustomerFileTypeEnum;
 use Modules\Customer\Enums\CustomerTypeEnum;
+use Modules\SellContract\Models\SellContract;
+use Modules\Employee\Models\Employee;
 
 class CustomerService
 {
@@ -147,7 +149,12 @@ class CustomerService
         $stoppedCount = $customers->where('segment_tag', 'stopped')->count();
 
         // Số báo giá (proposals)
-        $proposalCount = $customers->flatMap->proposals->count();
+        $allProposals = $customers->flatMap->proposals;
+        $proposalCount = $allProposals->count();
+
+        // Số đơn hàng (orders)
+        $allOrders = $customers->flatMap->orders;
+        $orderCount = $allOrders->count();
 
         // Khách hàng đã mua (có đơn hàng)
         $customerCount = $usingCount + $stoppedCount;
@@ -166,6 +173,30 @@ class CustomerService
             ->flatMap->orders
             ->flatMap->orderServices
             ->sum('total_price');
+
+        // Tỷ lệ chuyển đổi: báo giá -> đơn hàng
+        $conversionRate = $proposalCount > 0 ? ($orderCount / $proposalCount * 100) : 0;
+
+        // Thống kê theo nhân viên Sale (từ customer.sales_person_id)
+        $statsByEmployee = $customers
+            ->groupBy('sales_person_id')
+            ->mapWithKeys(function ($customerGroup, $employeeId) {
+                $proposals = $customerGroup->flatMap->proposals->count();
+                $orders = $customerGroup->flatMap->orders->count();
+                $contracts = SellContract::whereIn('customer_id', $customerGroup->pluck('id'))->count();
+                
+                $employee = Employee::find($employeeId);
+                $employeeName = $employee ? ($employee->full_name ?? 'NV #' . $employeeId) : 'Không gán';
+
+                return [$employeeId => [
+                    'id' => $employeeId,
+                    'name' => $employeeName,
+                    'proposals' => $proposals,
+                    'orders' => $orders,
+                    'contracts' => $contracts,
+                ]];
+            })
+            ->toArray();
 
         $monthlyNew = $customers
             ->filter(fn($c) => $c->created_at)
@@ -221,7 +252,6 @@ class CustomerService
             'using_count' => $usingCount,
             'lead_count' => $leadCount,
             'stopped_count' => $stoppedCount,
-            'proposal_count' => $proposalCount,
             'customer_count' => $customerCount,
             'service_count' => $serviceCount,
             'monthly_new' => $monthlyNew,
@@ -229,6 +259,8 @@ class CustomerService
             'yearly_new' => $yearlyNew,
             'total_revenue' => $totalRevenue,
             'top_customers' => $topCustomers,
+            'conversion_rate' => $conversionRate,
+            'stats_by_employee' => $statsByEmployee,
         ];
     }
 

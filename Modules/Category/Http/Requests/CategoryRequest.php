@@ -13,6 +13,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'service_field_id' => 'nullable|integer|exists:service_fields,id',
             'status' => 'required|string|max:255',
             'files.*' => 'nullable|file|mimes:xlsx,xls,jpg,jpeg,png,gif,doc,docx,mov,ppt,pptx,txt,pdf|max:10240',
         ];

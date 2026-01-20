@@ -160,6 +160,10 @@ class CategoryService
                 'updated_by' => $user->id,
             ];
 
+            if (array_key_exists('service_field_id', $data)) {
+                $updateData['service_field_id'] = $data['service_field_id'];
+            }
+
             if ($data['status'] == CategoryStatusEnum::ACTIVE) {
                 $updateData['approved_by'] = $user->id;
                 $updateData['approved_at'] = now();

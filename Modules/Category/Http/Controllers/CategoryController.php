@@ -9,11 +9,13 @@ use Modules\Category\Services\CategoryService;
 use Modules\Core\Enums\PermissionEnum;
 use Modules\Category\Http\Requests\CategoryListRequest;
 use Modules\Category\Models\Category;
+use Modules\Category\Repositories\CategoryServiceFieldRepository;
 
 class CategoryController extends Controller
 {
     public function __construct(
         protected CategoryService $categoryService,
+        protected CategoryServiceFieldRepository $serviceFieldRepository,
     ) {}
 
     /**
@@ -51,7 +53,9 @@ class CategoryController extends Controller
             ],
         ]);
 
-        return view('category::create');
+        $serviceFields = $this->serviceFieldRepository->all();
+
+        return view('category::create', compact('serviceFields'));
     }
 
     /**
@@ -119,7 +123,7 @@ class CategoryController extends Controller
     public function edit($categoryId)
     {
         can(PermissionEnum::CATEGORY_UPDATE);
-        $category = $this->categoryService->getCategoryById($categoryId)->load('files');
+        $category = $this->categoryService->getCategoryById($categoryId)->load('files', 'serviceField');
 
         set_breadcrumbs([
             [
@@ -132,7 +136,9 @@ class CategoryController extends Controller
             ],
         ]);
 
-        return view('category::edit', compact('category'));
+        $serviceFields = $this->serviceFieldRepository->all();
+
+        return view('category::edit', compact('category', 'serviceFields'));
     }
 
     /**
@@ -173,7 +179,7 @@ class CategoryController extends Controller
             ],
         ]);
 
-        $category = $this->categoryService->getCategoryById($categoryId);
+        $category = $this->categoryService->getCategoryById($categoryId)->load('serviceField');
         return view('category::show', compact('category'));
     }
 

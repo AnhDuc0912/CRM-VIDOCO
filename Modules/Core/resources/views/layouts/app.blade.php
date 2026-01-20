@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="{{ asset('assets/plugins/smart-wizard/css/smart_wizard_all.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css') }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.17/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/fancy-file-uploader/fancy_fileupload.css') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @stack('styles')
 </head>

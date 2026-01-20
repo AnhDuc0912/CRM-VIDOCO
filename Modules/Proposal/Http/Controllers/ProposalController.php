@@ -2,6 +2,8 @@
 
 namespace Modules\Proposal\Http\Controllers;
 
+use Illuminate\Container\Attributes\Auth;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Modules\Core\Enums\PermissionEnum;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Customer\Services\CustomerService;
@@ -102,6 +104,19 @@ class ProposalController extends Controller
     }
 
     /**
+     * Download a single file from a proposal.
+     *
+     * @param int $id
+     * @param int $fileId
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadFile($id, $fileId)
+    {
+        can(PermissionEnum::PROPOSAL_DOWNLOAD_FILES);
+        return $this->proposalService->downloadFile($id, $fileId);
+    }
+
+    /**
      * Convert a proposal to an order.
      *
      * @param int $id
@@ -187,6 +202,19 @@ class ProposalController extends Controller
     public function update(StoreProposalRequest $request, $id)
     {
         can(PermissionEnum::PROPOSAL_UPDATE);
+        
+        // Kiểm tra quyền upload file khi ở trạng thái yêu cầu làm lại
+        $proposal = $this->proposalService->getProposalById($id);
+        if ($proposal->status == \Modules\Proposal\Enums\ProposalStatusEnum::REJECTED_REDO && $request->hasFile('files')) {
+            $currentUser = FacadesAuth::user();
+            $personInCharge = $proposal->customer?->personInCharge;
+            
+            // Chỉ nhân viên được phân công mới được upload file khi ở trạng thái yêu cầu làm lại
+            if (!$personInCharge || !$currentUser->employee_id || $currentUser->employee_id != $personInCharge->id) {
+                return redirect()->back()->with('error', 'Chỉ nhân viên được phân công mới có thể upload file khi báo giá ở trạng thái yêu cầu làm lại');
+            }
+        }
+        
         $data = $request->validated();
         $this->proposalService->updateProposal($id, $data);
 

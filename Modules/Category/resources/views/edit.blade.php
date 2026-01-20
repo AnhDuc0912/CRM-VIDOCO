@@ -20,6 +20,7 @@
                 'action' => route('categories.update', $category->id),
                 'method' => 'put',
                 'category' => $category,
+                'serviceFields' => $serviceFields ?? [],
             ])
         </div>
     </div>

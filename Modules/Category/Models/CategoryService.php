@@ -18,6 +18,7 @@ class CategoryService extends Model
         'code',
         'name',
         'category_id',
+        'service_field_id',
         'description',
         'payment_type',
         'status',
@@ -41,5 +42,10 @@ class CategoryService extends Model
     public function orderServices()
     {
         return $this->hasMany(OrderService::class, 'service_id', 'id');
+    }
+
+    public function serviceField()
+    {
+        return $this->belongsTo(CategoryServiceField::class, 'service_field_id', 'id');
     }
 }

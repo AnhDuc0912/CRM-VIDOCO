@@ -15,6 +15,7 @@ class Category extends Model
      */
     protected $fillable = [
         'name',
+        'service_field_id',
         'description',
         'status',
         'created_by',
@@ -35,6 +36,11 @@ class Category extends Model
     public function services()
     {
         return $this->hasMany(CategoryService::class);
+    }
+
+    public function serviceField()
+    {
+        return $this->belongsTo(CategoryServiceField::class, 'service_field_id', 'id');
     }
 
     /**

@@ -14,6 +14,16 @@
                 <a class="btn btn-info" href="{{ route('customers.create') }}"><i class="bx bx-plus me-1"></i>Thêm khách
                     hàng</a>
             </div>
+            
+            @if ($proposal->status == ProposalStatusEnum::REJECTED_REDO)
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Lưu ý:</strong> Báo giá này đang ở trạng thái "Yêu cầu làm lại". 
+                    Chỉ nhân viên được phân công (<strong>{{ $proposal->customer?->personInCharge?->full_name ?? 'Chưa có' }}</strong>) 
+                    mới có thể upload file mới. File cũ sẽ được giữ lại để đối chiếu.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            
             <hr />
             <form id="proposal-form" method="POST" action="{{ route('proposals.update', $proposal->id) }}"
                 enctype="multipart/form-data">

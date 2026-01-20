@@ -122,23 +122,57 @@ class ProposalService
     private function updateFiles($proposal, $files)
     {
         if (!empty($files)) {
-            // if ($proposal->files()->count() > 0) {
-            //     $paths = $proposal->files()->pluck('path');
-            //     foreach ($paths as $path) {
-            //         FileHelper::deleteFile($path);
-            //     }
-            //     $proposal->files()->delete();
-            // }
+            // Filter out null/empty files
+            $files = array_filter($files, function ($file) {
+                return $file instanceof \Illuminate\Http\UploadedFile;
+            });
+
+            if (empty($files)) {
+                return;
+            }
+
+            // Nếu không ở trạng thái yêu cầu làm lại, xóa file cũ như bình thường
+            if ($proposal->status != ProposalStatusEnum::REJECTED_REDO) {
+                // Xóa file cũ khi không phải trạng thái yêu cầu làm lại
+                // if ($proposal->files()->count() > 0) {
+                //     $paths = $proposal->files()->pluck('path');
+                //     foreach ($paths as $path) {
+                //         FileHelper::deleteFile($path);
+                //     }
+                //     $proposal->files()->delete();
+                // }
+            }
 
             $path = 'proposals/' . str_replace('/', '-', $proposal->code);
             foreach ($files as $file) {
-                $file = FileHelper::uploadFile($file, $path);
-                $proposal->files()->create([
-                    'path' => $file['path'],
-                    'name' => $file['filename'],
-                    'extension' => $file['extension'],
-                    'proposal_id' => $proposal->id,
-                ]);
+                try {
+                    $uploadedFile = FileHelper::uploadFile($file, $path);
+                    
+                    // Only create file record if upload was successful
+                    if (isset($uploadedFile['success']) && $uploadedFile['success'] === true && !empty($uploadedFile['path'])) {
+                        $proposal->files()->create([
+                            'path' => $uploadedFile['path'],
+                            'name' => $uploadedFile['filename'],
+                            'extension' => $uploadedFile['extension'],
+                            'proposal_id' => $proposal->id,
+                        ]);
+                    } else {
+                        Log::warning('File upload failed for proposal ' . $proposal->id, [
+                            'response' => $uploadedFile,
+                            'file_name' => $file->getClientOriginalName()
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Exception during file upload for proposal ' . $proposal->id, [
+                        'error' => $e->getMessage(),
+                        'file_name' => $file->getClientOriginalName()
+                    ]);
+                }
+            }
+
+            // Nếu đang ở trạng thái yêu cầu làm lại và đã upload file mới, chuyển sang đã chỉnh sửa
+            if ($proposal->status == ProposalStatusEnum::REJECTED_REDO) {
+                $proposal->update(['status' => ProposalStatusEnum::REVISED]);
             }
         }
     }
@@ -194,6 +228,57 @@ class ProposalService
             ]);
 
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi download files: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download a single file from a proposal.
+     *
+     * @param int $id
+     * @param int $fileId
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadFile($id, $fileId)
+    {
+        try {
+            $proposal = $this->proposalRepository->find($id);
+
+            if (!$proposal) {
+                throw new \Exception('Không tìm thấy báo giá');
+            }
+
+            // Find the file
+            $file = $proposal->files()->find($fileId);
+
+            if (!$file) {
+                throw new \Exception('Không tìm thấy file');
+            }
+
+            // Get the full file path
+            $filePath = storage_path('app/public/' . $file->path);
+
+            if (!file_exists($filePath)) {
+                Log::error('File not found at path: ' . $filePath);
+                throw new \Exception('File không tồn tại trên server');
+            }
+
+            // Get the file name
+            $fileName = $file->name ?? basename($file->path);
+
+            // Return the file download response
+            return response()->download($filePath, $fileName, [
+                'Content-Type' => 'application/octet-stream',
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error downloading proposal file', [
+                'proposal_id' => $id,
+                'file_id' => $fileId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi download file: ' . $e->getMessage());
         }
     }
 

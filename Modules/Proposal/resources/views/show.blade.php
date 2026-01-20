@@ -135,25 +135,66 @@
 
             <div class="row g-3 mb-4">
                 <div class="col-12">
-                    <div class="file-preview" id="filePreview">
-                        @foreach ($proposal->files as $file)
-                            @if ($file->extension == 'jpeg' || $file->extension == 'png')
-                                <div class="file-item">
-                                    <div class="file-image">
-                                        <img src="{{ FileHelper::getFileUrl($file->path) }}" alt="Preview">
-                                    </div>
-                                </div>
-                            @else
-                                <div class="file-item">
-                                    <div class="file-image d-flex align-items-center justify-content-center">
-                                        <div class="file-icon text-primary">
-                                            {{ $file->extension ?? '' }}
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
+                    @if ($proposal->files->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>File</th>
+                                        <th>Kiểu</th>
+                                        <th>Tạo Lúc</th>
+                                        <th style="width: 150px;">Chức Năng</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($proposal->files as $file)
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @if (in_array($file->extension, ['jpeg', 'png', 'jpg']))
+                                                        <img src="{{ FileHelper::getFileUrl($file->path) }}" 
+                                                             alt="Preview" 
+                                                             style="width: 40px; height: 40px; border-radius: 4px; margin-right: 10px; object-fit: cover;">
+                                                    @else
+                                                        <div style="width: 40px; height: 40px; background: #e9ecef; display: flex; align-items: center; justify-content: center; border-radius: 4px; margin-right: 10px;">
+                                                            <span class="fw-bold text-primary" style="font-size: 12px;">{{ strtoupper($file->extension) }}</span>
+                                                        </div>
+                                                    @endif
+                                                    <span>{{ $file->name ?? basename($file->path) }}</span>
+                                                </div>
+                                            </td>
+                                            <td>{{ strtoupper($file->extension) }}</td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    {{ $file->created_at ? $file->created_at->format('d/m/Y H:i') : 'N/A' }}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <a href="{{ FileHelper::getFileUrl($file->path) }}" target="_blank" 
+                                                   class="btn btn-sm btn-outline-info" title="Xem trước">
+                                                    <i class="bx bx-show"></i>
+                                                </a>
+                                                <a href="{{ route('proposals.download-file', ['id' => $proposal->id, 'fileId' => $file->id]) }}"
+                                                   class="btn btn-sm btn-outline-success" title="Tải xuống">
+                                                    <i class="bx bx-download"></i>
+                                                </a>
+                                                @can(PermissionEnum::PROPOSAL_CONVERT_TO_ORDER)
+                                                    <a onclick="confirmDelete('{{ route('proposals.remove-file', ['id' => $proposal->id, 'fileId' => $file->id]) }}', 'Bạn có chắc chắn muốn xóa file này không?')"
+                                                       class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                        <i class="bx bx-trash"></i>
+                                                    </a>
+                                                @endcan
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="alert alert-info">
+                            Không có file đính kèm
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

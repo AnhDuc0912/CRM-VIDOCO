@@ -160,13 +160,13 @@ class CustomerController extends Controller
     public function show($id)
     {
         can(PermissionEnum::CUSTOMER_SHOW);
-        
+
         $customer = $this->customerService->getCustomerById($id);
         $user = Auth::user();
-        
+
         // Kiểm tra quyền xem chi tiết khách hàng
         $canView = false;
-        
+
         // Có quyền xem tất cả khách hàng (CEO, Quản lý, Kế toán)
         if (Gate::allows(PermissionEnum::CUSTOMER_SHOW_ALL)) {
             $canView = true;
@@ -179,12 +179,12 @@ class CustomerController extends Controller
         else if ($user && $user->employee && $customer->person_incharge === $user->employee->id) {
             $canView = true;
         }
-        
+
         // Nếu không có quyền, throw exception
         if (!$canView) {
             abort(403, 'Bạn không có quyền xem chi tiết khách hàng này');
         }
-        
+
         set_breadcrumbs([
             [
                 'title' => 'Khách hàng',
@@ -224,7 +224,6 @@ class CustomerController extends Controller
     public function showAjax($id)
     {
         $customer = $this->customerService->getCustomerById($id);
-
         return response()->json($customer);
     }
 

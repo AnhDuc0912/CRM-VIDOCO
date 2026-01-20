@@ -8,6 +8,7 @@ Route::middleware(['auth', 'verified'])->prefix('proposals')->name('proposals.')
     Route::get('/create', [ProposalController::class, 'create'])->name('create');
     Route::post('/store', [ProposalController::class, 'store'])->name('store');
     Route::get('/{id}/download-files', [ProposalController::class, 'downloadFiles'])->name('download-files');
+    Route::get('/{id}/download-file/{fileId}', [ProposalController::class, 'downloadFile'])->name('download-file');
     Route::put('/{id}/convert-to-order', [ProposalController::class, 'convertToOrder'])->name('convert-to-order');
     Route::put('/{id}/convert-to-contract', [ProposalController::class, 'convertToContract'])->name('convert-to-contract');
     Route::put('/{id}/reject-redo', [ProposalController::class, 'rejectRedo'])->name('reject-redo');

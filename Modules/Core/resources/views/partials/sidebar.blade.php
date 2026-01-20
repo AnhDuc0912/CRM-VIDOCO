@@ -320,6 +320,10 @@
                             <li> <a href="{{ route('services.index') }}"><i class="bx bx-right-arrow-alt"></i>Dịch vụ</a>
                             </li>
                         @endcan
+                        @can(PermissionEnum::SERVICE_VIEW)
+                            <li> <a href="{{ route('fields.index') }}"><i class="bx bx-right-arrow-alt"></i>Lĩnh vực</a>
+                            </li>
+                        @endcan
                     </ul>
                 </li>
             @endcanany

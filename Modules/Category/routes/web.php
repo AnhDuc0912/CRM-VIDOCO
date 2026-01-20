@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Category\Http\Controllers\CategoryController;
 use Modules\Category\Http\Controllers\CategoryServiceController;
+use Modules\Category\Http\Controllers\CategoryServiceFieldController;
 
 Route::middleware(['auth'])->group(function () {
     Route::prefix('categories')->name('categories.')->group(function () {
@@ -26,6 +27,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}/edit', [CategoryServiceController::class, 'edit'])->name('edit')->where('id', '[0-9]+');
         Route::put('/{id}', [CategoryServiceController::class, 'update'])->name('update')->where('id', '[0-9]+');
         Route::delete('/{id}', [CategoryServiceController::class, 'destroy'])
+            ->name('destroy')->where('id', '[0-9]+');
+    });
+
+    Route::prefix('fields')->name('fields.')->group(function () {
+        Route::get('/', [CategoryServiceFieldController::class, 'index'])->name('index');
+        Route::get('/create', [CategoryServiceFieldController::class, 'create'])->name('create');
+        Route::post('/store', [CategoryServiceFieldController::class, 'store'])->name('store');
+        Route::get('/{id}', [CategoryServiceFieldController::class, 'edit'])->name('edit')->where('id', '[0-9]+');
+        Route::put('/{id}', [CategoryServiceFieldController::class, 'update'])->name('update')->where('id', '[0-9]+');
+        Route::delete('/{id}', [CategoryServiceFieldController::class, 'destroy'])
             ->name('destroy')->where('id', '[0-9]+');
     });
 });

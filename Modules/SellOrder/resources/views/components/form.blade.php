@@ -265,36 +265,53 @@
 <hr>
 
 <h5 class="mt-4 mb-3">File báo Giá Đính Kèm</h5>
+
+
 <div class="row g-3 mb-4">
     <div class="col-12">
-        <input id="fancy-file-upload" type="file" name="files[]"
-            accept=".jpg, .png, image/jpeg, image/png, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx" multiple>
-    </div>
-    @if (request()->routeIs('sell-orders.edit'))
         <div class="file-preview" id="filePreview">
-            @foreach ($sellOrder->files as $file)
-                @if ($file->extension == 'jpeg' || $file->extension == 'png' || $file->extension == 'jpg')
-                    <div class="file-item">
-                        <div class="file-image">
-                            <img src="{{ FileHelper::getFileUrl($file->path) }}" alt="Preview">
-                        </div>
-                        <a class="remove-btn" href="javascript:void(0)"
-                            onclick="confirmDelete('{{ route('sell-orders.remove-file', ['id' => $sellOrder->id, 'fileId' => $file->id]) }}', 'Bạn có chắc chắn muốn xóa file này không?')">&times;</a>
-                    </div>
-                @else
-                    <div class="file-item">
-                        <div class="file-image d-flex align-items-center justify-content-center">
-                            <div class="file-icon text-primary">
-                                {{ $file->extension ?? '' }}
+            @if (!empty($sellOrder) && $sellOrder->files?->count() > 0)
+                @foreach ($sellOrder->files as $file)
+                    <div class="file-item d-flex align-items-center border rounded p-2 mb-2"
+                        style="background: #f8f9fa;">
+                        @if (in_array($file->extension, ['jpeg', 'png', 'jpg']))
+                            <div class="me-3" style="width: 48px; height: 48px;">
+                                <a href="{{ FileHelper::getFileUrl($file->path) }}" target="_blank">
+                                    <img src="{{ FileHelper::getFileUrl($file->path) }}" alt="Preview"
+                                        style="max-width: 100%; max-height: 100%; border-radius: 6px;">
+                                </a>
                             </div>
+                        @else
+                            <div class="me-3 d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: #e9ecef; border-radius: 6px;">
+                                <span class="fw-bold text-primary">{{ strtoupper($file->extension ?? '') }}</span>
+                            </div>
+                        @endif
+                        <div class="flex-grow-1">
+                            <div class="fw-bold text-dark">{{ $file->name ?? basename($file->path) }}</div>
+                            <div class="text-muted small">{{ $file->extension ?? '' }}</div>
                         </div>
-                        <a class="remove-btn" href="javascript:void(0)"
-                            onclick="confirmDelete('{{ route('sell-orders.remove-file', ['id' => $sellOrder->id, 'fileId' => $file->id]) }}', 'Bạn có chắc chắn muốn xóa file này không?')">&times;</a>
+                        <div class="ms-2 d-flex align-items-center">
+                            <a href="{{ route('sell-orders.download-files', ['id' => $sellOrder->id]) }}"
+                                target="_blank" class="btn btn-sm btn-outline-primary me-1" title="Tải về">
+                                <i class="bx bx-download"></i>
+                            </a>
+                            <a href="{{ FileHelper::getFileUrl($file->path) }}" target="_blank"
+                                class="btn btn-sm btn-outline-success me-1" title="Xem trước">
+                                <i class="bx bx-show"></i>
+                            </a>
+                            @if (in_array($file->extension, ['jpeg', 'png', 'jpg']))
+                                <a href="{{ FileHelper::getFileUrl($file->path) }}" target="_blank"
+                                    class="btn btn-sm btn-outline-info me-1" title="Xem ảnh">
+                                    <i class="bx bx-image"></i>
+                                </a>
+                            @endif
+                        </div>
                     </div>
-                @endif
-            @endforeach
+                @endforeach
+            @endif
         </div>
-    @endif
+    </div>
 </div>
 
 @push('scripts')

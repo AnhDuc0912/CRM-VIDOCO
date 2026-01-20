@@ -19,6 +19,7 @@
             @include('category::components.form', [
                 'action' => route('categories.store'),
                 'method' => 'post',
+                'serviceFields' => $serviceFields ?? [],
             ])
         </div>
     </div>

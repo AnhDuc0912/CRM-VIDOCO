@@ -20,7 +20,7 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
      */
     public function getAllCategories($params = [])
     {
-        $query = $this->model->with('services', 'services.products', 'creator', 'files');
+        $query = $this->model->with('services', 'services.products', 'creator', 'files', 'serviceField');
         if (!empty($params['category_service'])) {
             $query->whereHas('services', function($q) use ($params) {
                 $q->where('id', $params['category_service']);

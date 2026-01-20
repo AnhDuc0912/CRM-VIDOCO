@@ -41,6 +41,11 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
         ]);
 
+        // Category (includes service fields)
+        $this->call([
+            CategoryDatabaseSeeder::class,
+        ]);
+
         // User
         $this->call([
             DepartmentSeeder::class,

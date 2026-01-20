@@ -11,6 +11,7 @@ enum ProposalStatusEnum
     const CONVER_TO_ORDER = 5;
     const REJECTED_REDO = 6;
     const CONVERT_TO_CONTRACT = 7;
+    const REVISED = 8;
 
     public static function getStatusName($status)
     {
@@ -22,6 +23,7 @@ enum ProposalStatusEnum
             self::CONVER_TO_ORDER => 'Đã chuyển thành đơn hàng',
             self::REJECTED_REDO => 'Yêu cầu làm lại',
             self::CONVERT_TO_CONTRACT => 'Đã chuyển thành hợp đồng',
+            self::REVISED => 'Đã chỉnh sửa',
         };
     }
 
@@ -35,6 +37,7 @@ enum ProposalStatusEnum
             self::CONVER_TO_ORDER => 'Đã chuyển thành đơn hàng',
             self::REJECTED_REDO => 'Yêu cầu làm lại',
             self::CONVERT_TO_CONTRACT => 'Đã chuyển thành hợp đồng',
+            self::REVISED => 'Đã chỉnh sửa',
         ];
     }
 }
